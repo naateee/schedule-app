@@ -328,13 +328,13 @@ function loadData() {
 // 本地缓存(始终写,作为离线兜底)
 function saveDataLocal() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch(e) {} }
 
-// 保存:写本地缓存 + 若在线则推送到云端
+// 保存:写本地缓存 + 若云端已就绪则推送
 function saveData() {
   saveDataLocal();
   if (db && syncState === 'online') {
     pushToCloud();
   } else {
-    localDirty = true; // 离线时标记,等恢复在线再推
+    localDirty = true; // 尚未连上云端,标记待同步
   }
 }
 
@@ -963,23 +963,23 @@ function startListening() {
   if (!db) return;
   const ref = db.collection(FIREBASE_COLLECTION).doc(FIREBASE_DOC_ID);
   ref.onSnapshot((snap) => {
-    if (!snap.exists) {
-      // 云端还没有数据:把本地(种子)推上去作为首次初始化
-      pushToCloud();
+    const remoteData = snap.exists ? ((snap.data() || {}).data) : null;
+    // 云端无有效数据(文档不存在,或存在但缺 data/courses 字段) → 用本地数据初始化云端
+    if (!remoteData || !Array.isArray(remoteData.courses)) {
+      localDirty = true;
+      pushToCloud(); // 推成功后云端会再触发 onSnapshot,届时走正常分支
       return;
     }
-    const remote = snap.data();
-    const remoteData = remote && remote.data;
-    if (!remoteData || !remoteData.courses) return;
-
-    // 若本地有未上云的改动(离线期间),优先保留本地并推上去
+    // 本地有未上云的改动(离线期间改的) → 保留本地数据并推上去
     if (localDirty) {
-      data = data; // 保留本地
       pushToCloud();
-    } else {
-      data = remoteData;
-      saveDataLocal();
+      setSyncState('online');
+      render();
+      return;
     }
+    // 正常:采用云端数据
+    data = remoteData;
+    saveDataLocal();
     setSyncState('online');
     render();
   }, (err) => {
