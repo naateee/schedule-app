@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1e293b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>HKUST MSc(AI) 课程日历</title>
+<script src="schedule-data.js"></script>
+<style>
+  :root {
+    --bg: #eef1f6;
+    --panel: #ffffff;
+    --ink: #1e293b;
+    --ink-soft: #64748b;
+    --line: #e2e8f0;
+    --accent: #1e293b;
+    --radius: 14px;
+    --shadow: 0 1px 3px rgba(15,23,42,.08), 0 8px 24px rgba(15,23,42,.06);
+    --hour-h: 64px; /* 每小时高度(px) */
+    --day-start: 8;  /* 时间轴起点(时) */
+    --day-end: 23;   /* 时间轴终点(时) */
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+                 "Microsoft YaHei", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+  input, select, textarea { font-family: inherit; font-size: 14px; }
+
+  /* ===== 顶栏 ===== */
+  .app { max-width: 1200px; margin: 0 auto; padding: 0 16px 40px; }
+  .topbar {
+    position: sticky; top: 0; z-index: 30;
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 16px; margin: 0 -16px 14px;
+    background: rgba(238,241,246,.85); backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .brand { display: flex; flex-direction: column; line-height: 1.2; min-width: 0; }
+  .brand h1 { font-size: 18px; font-weight: 700; letter-spacing: .2px; }
+  .brand .sub { font-size: 12px; color: var(--ink-soft); }
+  .topbar .spacer { flex: 1; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 14px; border-radius: 10px; font-size: 14px; font-weight: 600;
+    background: var(--panel); border: 1px solid var(--line); color: var(--ink);
+    white-space: nowrap; transition: .15s;
+  }
+  .btn:hover { border-color: #cbd5e1; background: #f8fafc; }
+  .btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .btn.primary:hover { background: #334155; }
+  .btn.small { padding: 6px 11px; font-size: 13px; border-radius: 8px; }
+  .btn.danger { color: #dc2626; border-color: #fecaca; }
+  .btn.danger:hover { background: #fef2f2; border-color: #fca5a5; }
+  .btn.icon { padding: 8px; border-radius: 10px; }
+
+  /* ===== 周导航 ===== */
+  .weeknav {
+    display: flex; align-items: center; justify-content: center; gap: 12px;
+    margin-bottom: 14px;
+  }
+  .weeknav .range {
+    min-width: 220px; text-align: center; font-weight: 700; font-size: 16px;
+  }
+  .weeknav .range .tag {
+    display: inline-block; margin-left: 6px; font-size: 11px; font-weight: 700;
+    background: #10b981; color: #fff; padding: 2px 7px; border-radius: 20px;
+    vertical-align: 2px;
+  }
+  .weeknav .navbtn {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: var(--panel); border: 1px solid var(--line);
+    font-size: 18px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center;
+    transition: .15s;
+  }
+  .weeknav .navbtn:hover { background: #f1f5f9; }
+  .weeknav .today-btn { font-size: 13px; color: var(--accent); font-weight: 600; }
+
+  /* ===== 桌面时间轴视图 ===== */
+  .desktop-view { display: block; }
+  .grid-wrap {
+    background: var(--panel); border-radius: var(--radius); box-shadow: var(--shadow);
+    overflow: hidden; border: 1px solid var(--line);
+  }
+  .grid-head {
+    display: grid; grid-template-columns: 56px repeat(7, 1fr);
+    border-bottom: 1px solid var(--line);
+  }
+  .grid-head .corner { border-right: 1px solid var(--line); }
+  .grid-head .dhead {
+    padding: 10px 6px; text-align: center; border-left: 1px solid var(--line);
+    font-size: 12px; color: var(--ink-soft);
+  }
+  .grid-head .dhead .dname { font-weight: 700; color: var(--ink); font-size: 13px; }
+  .grid-head .dhead.today { background: #f0f7ff; }
+  .grid-head .dhead.today .dnum { background: var(--accent); color: #fff; border-radius: 50%; width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; margin-top: 2px; }
+
+  .grid-body-wrap { position: relative; }
+  .grid-body { display: grid; grid-template-columns: 56px repeat(7, 1fr); grid-template-rows: 1fr; height: calc((var(--day-end) - var(--day-start)) * var(--hour-h) + 28px); position: relative; }
+  /* 时间轴列 */
+  .time-col { position: relative; border-right: 1px solid var(--line); }
+  .time-col .tick { position: absolute; left: 0; right: 0; text-align: right; padding-right: 8px; font-size: 11px; color: var(--ink-soft); transform: translateY(-50%); }
+  /* 天列 */
+  .day-col { position: relative; border-left: 1px solid var(--line); }
+  .day-col.today { background: #fafcff; }
+  .hour-line { position: absolute; left: 0; right: 0; border-top: 1px solid #eef2f7; }
+  .hour-line.half { border-top: 1px dashed #f1f5f9; }
+
+  /* 课程/事件卡片(桌面) */
+  .cell {
+    position: absolute; left: 3px; right: 3px; border-radius: 8px;
+    padding: 4px 6px; font-size: 12px; overflow: hidden; cursor: pointer;
+    box-shadow: 0 1px 2px rgba(15,23,42,.08);
+    transition: transform .1s, box-shadow .1s;
+    border-left: 4px solid var(--c, #94a3b8);
+    background: var(--cbg, #f1f5f9);
+    color: #0f172a;
+  }
+  .cell:hover { transform: scale(1.02); box-shadow: 0 4px 12px rgba(15,23,42,.16); z-index: 5; }
+  .cell .t { font-weight: 700; line-height: 1.25; }
+  .cell .m { color: #475569; font-size: 11px; line-height: 1.3; }
+  .cell .rm { color: #64748b; font-size: 10px; }
+  .cell.event { --c: #94a3b8; --cbg: #ffffff; border: 1px solid #e2e8f0; border-left: 4px solid #94a3b8; }
+  .cell.makeup { border: 1.5px dashed #94a3b8; border-left: 4px solid var(--c); }
+  .cell.moved-away { opacity: .62; border: 1.5px dashed #cbd5e1; border-left: 4px solid var(--c); cursor: pointer; }
+
+  /* ===== 移动端列表视图 ===== */
+  .mobile-view { display: none; }
+  .day-block { background: var(--panel); border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--line); margin-bottom: 12px; overflow: hidden; }
+  .day-block .dhead { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-bottom: 1px solid var(--line); }
+  .day-block .dhead .dname { font-weight: 700; }
+  .day-block .dhead .ddate { color: var(--ink-soft); font-size: 13px; }
+  .day-block .dhead .today-dot { margin-left: auto; font-size: 11px; background: #10b981; color: #fff; padding: 2px 8px; border-radius: 20px; }
+  .day-block .dhead .add-day { margin-left: auto; font-size: 13px; color: var(--accent); font-weight: 600; }
+  .m-item { display: flex; gap: 12px; padding: 12px 14px; border-bottom: 1px solid #f1f5f9; align-items: flex-start; }
+  .m-item:last-child { border-bottom: none; }
+  .m-item .bar { width: 5px; align-self: stretch; border-radius: 3px; background: var(--c, #94a3b8); flex-shrink: 0; }
+  .m-item .info { flex: 1; min-width: 0; }
+  .m-item .time { font-size: 13px; color: var(--ink-soft); font-weight: 600; margin-bottom: 2px; }
+  .m-item .title { font-weight: 700; line-height: 1.3; }
+  .m-item .meta { font-size: 12px; color: var(--ink-soft); margin-top: 2px; }
+  .m-empty { padding: 18px 14px; color: #cbd5e1; font-size: 13px; text-align: center; }
+
+  /* ===== 弹窗 ===== */
+  .overlay {
+    position: fixed; inset: 0; background: rgba(15,23,42,.45); z-index: 100;
+    display: none; align-items: flex-end; justify-content: center;
+    backdrop-filter: blur(2px);
+  }
+  .overlay.open { display: flex; }
+  .modal {
+    background: #fff; width: 100%; max-width: 520px; border-radius: 18px 18px 0 0;
+    padding: 20px; max-height: 88vh; overflow-y: auto; animation: slideUp .22s ease;
+  }
+  @keyframes slideUp { from { transform: translateY(40px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+  @media (min-width: 560px) {
+    .overlay { align-items: center; padding: 20px; }
+    .modal { border-radius: 18px; }
+  }
+  .modal h2 { font-size: 18px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
+  .modal .sub { color: var(--ink-soft); font-size: 13px; margin-bottom: 16px; }
+  .modal .close { float: right; font-size: 22px; color: #94a3b8; line-height: 1; }
+  .chip { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 6px; background: #f1f5f9; color: var(--ink-soft); }
+  .chip.core { background: #fff7ed; color: #ea580c; }
+
+  /* 课程详情 */
+  .cd-head { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+  .cd-swatch { width: 48px; height: 48px; border-radius: 12px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #fff; font-size: 13px; }
+  .cd-rows { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
+  .cd-row { background: #f8fafc; border: 1px solid #f1f5f9; border-radius: 10px; padding: 9px 12px; }
+  .cd-row .k { font-size: 11px; color: var(--ink-soft); margin-bottom: 1px; }
+  .cd-row .v { font-weight: 600; font-size: 14px; }
+  .cd-desc { font-size: 13px; color: #475569; background: #f8fafc; border-radius: 10px; padding: 12px; margin-bottom: 16px; }
+  .cd-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .override-box { border: 1px dashed #cbd5e1; border-radius: 10px; padding: 12px; margin: 14px 0; font-size: 13px; }
+  .override-box .otitle { font-weight: 700; margin-bottom: 6px; font-size: 13px; }
+  .override-box .orow { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 4px 0; }
+
+  /* 表单 */
+  .form { display: flex; flex-direction: column; gap: 12px; }
+  .field { display: flex; flex-direction: column; gap: 4px; }
+  .field label { font-size: 12px; font-weight: 600; color: var(--ink-soft); }
+  .field input, .field select, .field textarea {
+    padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: #fafbfc;
+    font-size: 14px; color: var(--ink); width: 100%;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: #94a3b8; background: #fff; }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .swatches { display: flex; gap: 8px; flex-wrap: wrap; }
+  .swatch { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 3px solid transparent; transition: .1s; }
+  .swatch.sel { border-color: var(--ink); }
+
+  .hint { font-size: 12px; color: var(--ink-soft); }
+
+  /* ===== 响应式断点 ===== */
+  @media (max-width: 767px) {
+    .desktop-view { display: none; }
+    .mobile-view { display: block; }
+    .app { padding: 0 10px 30px; }
+    .topbar { margin: 0 -10px 10px; padding: 10px 12px; }
+    .brand h1 { font-size: 16px; }
+    .btn { padding: 7px 11px; font-size: 13px; }
+    .weeknav .range { min-width: 0; font-size: 14px; }
+  }
+  @media (min-width: 768px) {
+    .desktop-view { display: block; }
+    .mobile-view { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand">
+      <h1>HKUST MSc(AI) 课程日历</h1>
+      <span class="sub">Fall 2026 · 6 门课程 · 自由日程</span>
+    </div>
+    <div class="spacer"></div>
+    <button class="btn icon" id="btnExport" title="导出 JSON 备份">⤓</button>
+    <button class="btn icon" id="btnImport" title="导入 JSON">⤒</button>
+    <button class="btn primary" id="btnAdd">＋ 添加日程</button>
+  </div>
+
+  <div class="weeknav">
+    <button class="navbtn" id="prevWeek" title="上一周">‹</button>
+    <div class="range" id="rangeLabel"></div>
+    <button class="navbtn" id="nextWeek" title="下一周">›</button>
+    <button class="today-btn" id="btnToday">今天</button>
+  </div>
+
+  <!-- 桌面视图 -->
+  <div class="desktop-view" id="desktopView">
+    <div class="grid-wrap">
+      <div class="grid-head" id="gridHead"></div>
+      <div class="grid-body-wrap" id="gridBodyWrap">
+        <div class="grid-body" id="gridBody"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 移动视图 -->
+  <div class="mobile-view" id="mobileView"></div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="modal" id="modal"></div>
+</div>
+
+<input type="file" id="fileInput" accept="application/json" style="display:none">
+
+<script>
+/* ================= 数据模型 ================= */
+const STORAGE_KEY = 'hkust-schedule-v1';
+
+const COURSE_COLORS = [
+  { c: '#4f8ef7', bg: '#eaf1fe' }, // 蓝
+  { c: '#34c38f', bg: '#e6f7f1' }, // 绿
+  { c: '#8b6cf5', bg: '#efeafd' }, // 紫
+  { c: '#f5a623', bg: '#fdf0e0' }, // 橙
+  { c: '#f26d9a', bg: '#fdeaf1' }, // 玫红
+  { c: '#22b8cf', bg: '#e0f5f8' }, // 青
+];
+
+const DAY_NAMES = ['周日','周一','周二','周三','周四','周五','周六'];
+const DAY_SHORT = ['日','一','二','三','四','五','六'];
+
+let data = null;
+let anchor = null;      // 当前周锚点(周一)
+let curCourseForOverride = null;
+
+/* ================= 工具函数 ================= */
+function fmt(d) { // Date -> 'YYYY-MM-DD'
+  const y = d.getFullYear(), m = String(d.getMonth()+1).padStart(2,'0'), dd = String(d.getDate()).padStart(2,'0');
+  return `${y}-${m}-${dd}`;
+}
+function parseDate(s) { const [y,m,d] = s.split('-').map(Number); return new Date(y, m-1, d); }
+function addDays(d, n) { const r = new Date(d); r.setDate(r.getDate()+n); return r; }
+function mondayOf(d) { const r = new Date(d); const day = (r.getDay()+6)%7; r.setDate(r.getDate()-day); r.setHours(0,0,0,0); return r; }
+function today() { const r = new Date(); r.setHours(0,0,0,0); return r; }
+function t2m(t) { const [h,m] = t.split(':').map(Number); return h*60+m; }
+function m2t(m) { const h = Math.floor(m/60), mm = m%60; return `${String(h).padStart(2,'0')}:${String(mm).padStart(2,'0')}`; }
+function uid() { return 'id'+Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
+function esc(s) { return String(s??'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+/* ================= 状态 & 持久化 ================= */
+function loadData() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) { data = JSON.parse(raw); if (data && data.courses) return; }
+  } catch(e) {}
+  // 首次打开:从外部数据文件 schedule-data.js 的 SCHEDULE_SEED 载入
+  if (typeof SCHEDULE_SEED !== 'undefined' && SCHEDULE_SEED && SCHEDULE_SEED.courses) {
+    data = JSON.parse(JSON.stringify(SCHEDULE_SEED));
+  } else {
+    data = { semester:{}, courses: [], events: [] };
+  }
+  saveData();
+}
+function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+
+/* ================= 周内上课日期计算 ================= */
+// 返回该课程在 anchor 这一周(周一~周日)的上课 Date(可能 null)
+function courseDateInWeek(course, monday) {
+  // course.day: 1=周一 ... 6=周六, 7=周日
+  const idx = course.day - 1; // 0..6
+  return addDays(monday, idx);
+}
+function overrideFor(course, dateStr) {
+  return (course.overrides||[]).find(o => o.date === dateStr);
+}
+
+/* ================= 上课场次解析(含跨周调课) ================= */
+// 返回某天该课程的所有上课场次(正常课 0~1 场 + 补课场次)
+// 每条: { kind:'normal'|'makeup', date, start, end, room, fromDate, moved }
+function getCourseSessionsOnDate(course, dateStr) {
+  const out = [];
+  const ov = overrideFor(course, dateStr);
+  // 1) 正常课(该课程默认星期几 == 这一天),且未被"调走"
+  if (course.day === (parseDate(dateStr).getDay()||7) && !(ov && (ov.skip || ov.moveTo))) {
+    out.push({ kind:'normal', date: dateStr, start: ov&&ov.start?ov.start:course.start,
+      end: ov&&ov.end?ov.end:course.end, room: ov&&ov.room?ov.room:course.room, fromDate:null, moved:false });
+  }
+  // 2) 从其它日期调来的补课
+  for (const o of (course.overrides||[])) {
+    if (o.moveTo === dateStr && !o.skip) {
+      out.push({ kind:'makeup', date: dateStr, start: o.start||course.start, end: o.end||course.end,
+        room: o.room||course.room, fromDate: o.date, moved:true });
+    }
+  }
+  return out;
+}
+// 判断某课程某天是否应显示为"本周安排"(该天是它的默认上课日,或该天有它的补课)
+function courseVisibleOnDate(course, dateStr) {
+  const ov = overrideFor(course, dateStr);
+  const isDefault = course.day === (parseDate(dateStr).getDay()||7);
+  const hasMakeup = (course.overrides||[]).some(o=>o.moveTo===dateStr);
+  return (isDefault || hasMakeup || (ov && ov.moveTo)); // 含"被调走"的原日期也可见(用于展示)
+}
+
+/* ================= 渲染 ================= */
+function render() {
+  renderRangeLabel();
+  renderHead();
+  renderBody();
+  renderMobile();
+}
+
+function renderRangeLabel() {
+  const end = addDays(anchor, 6);
+  const el = document.getElementById('rangeLabel');
+  const isThisWeek = fmt(today()) >= fmt(anchor) && fmt(today()) <= fmt(end);
+  el.innerHTML = `${anchor.getFullYear()}年${anchor.getMonth()+1}月${anchor.getDate()}日 – ${end.getMonth()+1}月${end.getDate()}日` +
+    (isThisWeek ? '<span class="tag">本周</span>' : '');
+}
+
+function renderHead() {
+  const head = document.getElementById('gridHead');
+  let html = '<div class="corner"></div>';
+  for (let i=0;i<7;i++) {
+    const d = addDays(anchor, i);
+    const isToday = fmt(d) === fmt(today());
+    const name = i===0?'周一':i===1?'周二':i===2?'周三':i===3?'周四':i===4?'周五':i===5?'周六':'周日';
+    html += `<div class="dhead ${isToday?'today':''}">
+      <div class="dname">${name}</div>
+      <div class="dnum">${d.getMonth()+1}/${d.getDate()}</div>
+    </div>`;
+  }
+  head.innerHTML = html;
+}
+
+function renderBody() {
+  const body = document.getElementById('gridBody');
+  const START = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--day-start'));
+  const END = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--day-end'));
+  const HOUR_H = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--hour-h'));
+  const totalMin = (END-START)*60;
+  const pxPerMin = (HOUR_H*(END-START)) / totalMin; // = HOUR_H/60
+
+  let html = '<div class="time-col">';
+  for (let h=START; h<=END; h++) {
+    const top = (h-START)*HOUR_H;
+    html += `<div class="tick" style="top:${top}px">${String(h).padStart(2,'0')}:00</div>`;
+  }
+  html += '</div>';
+
+  for (let i=0;i<7;i++) {
+    const d = addDays(anchor, i);
+    const dateStr = fmt(d);
+    const isToday = dateStr === fmt(today());
+    html += `<div class="day-col ${isToday?'today':''}" data-col="${i}" data-date="${dateStr}">`;
+    for (let h=START; h<END; h++) {
+      const top = (h-START)*HOUR_H;
+      html += `<div class="hour-line" style="top:${top}px"></div>`;
+      html += `<div class="hour-line half" style="top:${top + HOUR_H/2}px"></div>`;
+    }
+    // 课程
+    for (const c of data.courses) {
+      if (!c.active) continue;
+      const ov = overrideFor(c, dateStr);
+      // 该天是课程默认上课日,但被调走了 → 显示"已调课"占位提示
+      if (c.day === (parseDate(dateStr).getDay()||7) && ov && ov.moveTo) {
+        const sm = t2m(ov.start||c.start), em = t2m(ov.end||c.end);
+        const top = (sm - START*60) * pxPerMin;
+        const height = Math.max((em-sm)*pxPerMin, 26);
+        html += `<div class="cell moved-away" data-course="${c.id}" data-date="${dateStr}" style="top:${top}px;height:${height}px;--c:${c.color};--cbg:#f8fafc;">
+          <div class="t">${esc(c.short)} <span style="font-weight:400;color:#94a3b8">(已调走)</span></div>
+          <div class="m">调至 ${ov.moveTo}</div>
+        </div>`;
+        continue;
+      }
+      const sessions = getCourseSessionsOnDate(c, dateStr);
+      for (const s of sessions) {
+        const sm = t2m(s.start), em = t2m(s.end);
+        const top = (sm - START*60) * pxPerMin;
+        const height = Math.max((em-sm)*pxPerMin, 26);
+        const makeup = s.kind==='makeup';
+        html += `<div class="cell ${makeup?'makeup':''}" data-course="${c.id}" data-date="${dateStr}" data-from="${s.fromDate||''}" style="top:${top}px;height:${height}px;--c:${c.color};--cbg:${makeup?'#fff':c.bg};">
+          <div class="t">${esc(c.short)}${makeup?'<span style="font-weight:400;color:#94a3b8"> 补课</span>':''}</div>
+          <div class="m">${s.start}–${s.end}</div>
+          <div class="rm">${esc(s.room)}${makeup&&s.fromDate?' · 原'+s.fromDate:''}</div>
+        </div>`;
+      }
+    }
+    // 事件
+    for (const ev of data.events) {
+      if (ev.date !== dateStr) continue;
+      const sm = t2m(ev.start), em = t2m(ev.end||ev.start);
+      const top = (sm - START*60) * pxPerMin;
+      const height = Math.max((em-sm)*pxPerMin, 26);
+      html += `<div class="cell event" data-event="${ev.id}" style="top:${top}px;height:${height}px;--c:${ev.color||'#94a3b8'};--cbg:#ffffff;">
+        <div class="t">${esc(ev.title)}</div>
+        <div class="m">${ev.start}–${ev.end||''}</div>
+        ${ev.location?`<div class="rm">${esc(ev.location)}</div>`:''}
+      </div>`;
+    }
+    html += '</div>';
+  }
+  body.innerHTML = html;
+}
+
+function renderMobile() {
+  const el = document.getElementById('mobileView');
+  let html = '';
+  for (let i=0;i<7;i++) {
+    const d = addDays(anchor, i);
+    const dateStr = fmt(d);
+    const isToday = dateStr === fmt(today());
+    const name = i===0?'周一':i===1?'周二':i===2?'周三':i===3?'周四':i===4?'周五':i===5?'周六':'周日';
+    const items = [];
+
+    for (const c of data.courses) {
+      if (!c.active) continue;
+      const ov = overrideFor(c, dateStr);
+      // 默认上课日被调走 → 提示项
+      if (c.day === (parseDate(dateStr).getDay()||7) && ov && ov.moveTo) {
+        items.push({ type:'moved', id:c.id, start:ov.start||c.start, end:ov.end||c.end, title:c.short+' (已调走)', meta:'调至 '+ov.moveTo, color:c.color });
+        continue;
+      }
+      const sessions = getCourseSessionsOnDate(c, dateStr);
+      for (const s of sessions) {
+        const makeup = s.kind==='makeup';
+        items.push({ type:'course', id:c.id, fromDate:s.fromDate, start:s.start, end:s.end,
+          title:c.short + (makeup?' (补课)':''), meta:`${c.code} · ${s.room}${makeup&&s.fromDate?' · 原'+s.fromDate:''}`, color:c.color });
+      }
+    }
+    for (const ev of data.events) {
+      if (ev.date !== dateStr) continue;
+      items.push({ type:'event', id:ev.id, start:ev.start, end:ev.end, title:ev.title, meta:ev.location||'', color:ev.color||'#94a3b8' });
+    }
+    items.sort((a,b)=> t2m(a.start)-t2m(b.start));
+
+    html += `<div class="day-block">
+      <div class="dhead">
+        <span class="dname">${name}</span>
+        <span class="ddate">${d.getMonth()+1}月${d.getDate()}日</span>
+        ${isToday?'<span class="today-dot">今天</span>':`<button class="add-day" data-add="${dateStr}">＋</button>`}
+      </div>`;
+    if (items.length === 0) html += '<div class="m-empty">暂无安排</div>';
+    for (const it of items) {
+      const isEv = it.type==='event';
+      const fromAttr = (it.type==='course' && it.fromDate) ? ` data-from="${it.fromDate}"` : '';
+      html += `<div class="m-item" style="cursor:pointer" data-${isEv?'event':'course'}="${it.id}" data-date="${dateStr}"${fromAttr}>
+        <div class="bar" style="--c:${it.color}"></div>
+        <div class="info">
+          <div class="time">${it.start} – ${it.end||''}</div>
+          <div class="title">${esc(it.title)}</div>
+          ${it.meta?`<div class="meta">${esc(it.meta)}</div>`:''}
+        </div>
+      </div>`;
+    }
+    html += '</div>';
+  }
+  el.innerHTML = html;
+}
+
+/* ================= 弹窗 ================= */
+function openModal(html) {
+  document.getElementById('modal').innerHTML = html;
+  document.getElementById('overlay').classList.add('open');
+}
+function closeModal() {
+  document.getElementById('overlay').classList.remove('open');
+  document.getElementById('modal').innerHTML = '';
+}
+
+/* --- 课程详情弹窗 --- */
+function showCourseDetail(id, dateStr, fromDate) {
+  const c = data.courses.find(x=>x.id===id); if (!c) return;
+  // 锚定日期:补课卡片锚定到"原日期"(override 存在那里),否则用当前日期
+  const anchorDate = fromDate || dateStr;
+  curCourseForOverride = { id, dateStr: anchorDate };
+  const ov = overrideFor(c, anchorDate);
+  const start = ov && ov.start ? ov.start : c.start;
+  const end = ov && ov.end ? ov.end : c.end;
+  const room = ov && ov.room ? ov.room : c.room;
+
+  // 状态描述
+  let statusRow = '';
+  if (ov && ov.skip) {
+    statusRow = `<div class="orow"><span>⏸ 本周已停课</span><button class="btn small" onclick="cancelSkip()">恢复上课</button></div>`;
+  } else if (ov && ov.moveTo) {
+    statusRow = `<div class="orow"><span>🔀 已调到 ${ov.moveTo}</span><button class="btn small danger" onclick="cancelMove()">取消调课</button></div>`;
+  } else if (ov && ov.start) {
+    statusRow = `<div class="orow"><span>🕒 已改时间 ${ov.start}–${ov.end}${ov.room?' · '+ov.room:''}</span><button class="btn small danger" onclick="clearOverride()">清除修改</button></div>`;
+  } else {
+    statusRow = `<div class="orow"><span>正常上课</span><button class="btn small danger" onclick="markSkip()">设为停课</button></div>`;
+  }
+  const fromNote = fromDate ? `<div class="hint" style="margin-top:8px">↩ 这是从 ${fromDate} 调来的补课</div>` : '';
+
+  openModal(`
+    <button class="close" onclick="closeModal()">×</button>
+    <div class="cd-head">
+      <div class="cd-swatch" style="background:${c.color}">${esc(c.short.slice(0,3))}</div>
+      <div>
+        <h2>${esc(c.short)}</h2>
+        <div class="sub">${esc(c.code)} · ${esc(c.name)}</div>
+      </div>
+    </div>
+    <div class="cd-rows">
+      <div class="cd-row"><div class="k">教师</div><div class="v">${esc(c.instructor)}</div></div>
+      <div class="cd-row"><div class="k">星期</div><div class="v">每${DAY_NAMES[c.day]}</div></div>
+      <div class="cd-row"><div class="k">时间</div><div class="v">${start} – ${end}</div></div>
+      <div class="cd-row"><div class="k">地点</div><div class="v">${esc(room)}</div></div>
+    </div>
+    <div style="margin-bottom:12px">
+      ${c.core?'<span class="chip core">核心必修</span>':''}
+      <span class="chip">${esc(c.campus||'HKUST')}</span>
+      <span class="chip">${c.active?'已选':'已退课'}</span>
+    </div>
+    <div class="cd-desc">${esc(c.description||'暂无课程描述。')}</div>
+
+    <div class="override-box">
+      <div class="otitle">📅 本场安排 ${anchorDate?`(${anchorDate})`:''}</div>
+      ${statusRow}
+      ${fromNote}
+      <div class="orow" style="margin-top:8px">
+        <span>调整本场</span>
+        <span style="display:flex;gap:6px">
+          <button class="btn small" onclick="openOverrideForm()">改时间/地点</button>
+          <button class="btn small" onclick="openMoveForm()">调到另一天</button>
+        </span>
+      </div>
+    </div>
+
+    <div class="cd-actions">
+      <button class="btn" onclick="openEditCourse('${id}')">✎ 编辑课程</button>
+      ${c.active
+        ? '<button class="btn danger" onclick="toggleActive(\''+id+'\')">退课(隐藏)</button>'
+        : '<button class="btn" onclick="toggleActive(\''+id+'\')">恢复选课</button>'}
+    </div>
+  `);
+}
+
+function markSkip() {
+  if (!curCourseForOverride) return;
+  const c = data.courses.find(x=>x.id===curCourseForOverride.id);
+  if (!c) return;
+  c.overrides = (c.overrides||[]).filter(o=>o.date!==curCourseForOverride.dateStr);
+  c.overrides.push({ date: curCourseForOverride.dateStr, skip:true });
+  saveData(); render(); showCourseDetail(curCourseForOverride.id, curCourseForOverride.dateStr);
+}
+function cancelSkip() {
+  if (!curCourseForOverride) return;
+  const c = data.courses.find(x=>x.id===curCourseForOverride.id);
+  if (!c) return;
+  c.overrides = (c.overrides||[]).filter(o=>o.date!==curCourseForOverride.dateStr);
+  saveData(); render(); showCourseDetail(curCourseForOverride.id, curCourseForOverride.dateStr);
+}
+
+/* --- 调课到另一天 --- */
+function openMoveForm() {
+  if (!curCourseForOverride) return;
+  const c = data.courses.find(x=>x.id===curCourseForOverride.id);
+  const ov = overrideFor(c, curCourseForOverride.dateStr);
+  openModal(`
+    <button class="close" onclick="closeModal()">×</button>
+    <h2>调到另一天</h2>
+    <div class="sub">${esc(c.short)} · 原 ${curCourseForOverride.dateStr}</div>
+    <div class="form">
+      <div class="field"><label>调到哪一天</label><input type="date" id="mvDate" value="${ov&&ov.moveTo?ov.moveTo:curCourseForOverride.dateStr}"></div>
+      <div class="field-row">
+        <div class="field"><label>开始时间</label><input type="time" id="mvStart" value="${ov&&ov.start?ov.start:c.start}"></div>
+        <div class="field"><label>结束时间</label><input type="time" id="mvEnd" value="${ov&&ov.end?ov.end:c.end}"></div>
+      </div>
+      <div class="field"><label>地点(可留空)</label><input type="text" id="mvRoom" value="${esc(ov&&ov.room?ov.room:c.room)}"></div>
+      <div class="hint">原日期该节课将自动空出,目标日期会新增一节"补课"。</div>
+      <div style="display:flex;gap:8px">
+        <button class="btn primary" style="flex:1" onclick="saveMove()">保存调课</button>
+      </div>
+    </div>
+  `);
+}
+function saveMove() {
+  if (!curCourseForOverride) return;
+  const c = data.courses.find(x=>x.id===curCourseForOverride.id);
+  const toDate = document.getElementById('mvDate').value;
+  const start = document.getElementById('mvStart').value;
+  const end = document.getElementById('mvEnd').value;
+  const room = document.getElementById('mvRoom').value.trim();
+  if (!toDate) { alert('请选择目标日期'); return; }
+  c.overrides = (c.overrides||[]).filter(o=>o.date!==curCourseForOverride.dateStr);
+  c.overrides.push({ date:curCourseForOverride.dateStr, moveTo:toDate, start, end, room });
+  saveData(); render(); showCourseDetail(curCourseForOverride.id, curCourseForOverride.dateStr);
+}
+function cancelMove() {
+  if (!curCourseForOverride) return;
+  const c = data.courses.find(x=>x.id===curCourseForOverride.id);
+  c.overrides = (c.overrides||[]).filter(o=>o.date!==curCourseForOverride.dateStr);
+  saveData(); render(); showCourseDetail(curCourseForOverride.id, curCourseForOverride.dateStr);
+}
+
+function openOverrideForm() {
+  if (!curCourseForOverride) return;
+  const c = data.courses.find(x=>x.id===curCourseForOverride.id);
+  const ov = overrideFor(c, curCourseForOverride.dateStr);
+  openModal(`
+    <button class="close" onclick="closeModal()">×</button>
+    <h2>改时间/地点</h2>
+    <div class="sub">${esc(c.short)} · ${curCourseForOverride.dateStr}</div>
+    <div class="form">
+      <div class="field-row">
+        <div class="field"><label>开始时间</label><input type="time" id="ovStart" value="${ov&&ov.start?ov.start:c.start}"></div>
+        <div class="field"><label>结束时间</label><input type="time" id="ovEnd" value="${ov&&ov.end?ov.end:c.end}"></div>
+      </div>
+      <div class="field"><label>地点(可留空)</label><input type="text" id="ovRoom" value="${esc(ov&&ov.room?ov.room:c.room)}"></div>
+      <div style="display:flex;gap:8px">
+        <button class="btn primary" style="flex:1" onclick="saveOverride()">保存</button>
+        ${ov && ov.start ? '<button class="btn danger" onclick="clearOverride()">清除修改</button>':''}
+      </div>
+    </div>
+  `);
+}
+function saveOverride() {
+  if (!curCourseForOverride) return;
+  const c = data.courses.find(x=>x.id===curCourseForOverride.id);
+  const start = document.getElementById('ovStart').value;
+  const end = document.getElementById('ovEnd').value;
+  const room = document.getElementById('ovRoom').value.trim();
+  c.overrides = (c.overrides||[]).filter(o=>o.date!==curCourseForOverride.dateStr);
+  c.overrides.push({ date:curCourseForOverride.dateStr, start, end, room });
+  saveData(); render(); showCourseDetail(curCourseForOverride.id, curCourseForOverride.dateStr);
+}
+function clearOverride() {
+  if (!curCourseForOverride) return;
+  const c = data.courses.find(x=>x.id===curCourseForOverride.id);
+  c.overrides = (c.overrides||[]).filter(o=>o.date!==curCourseForOverride.dateStr);
+  saveData(); render(); showCourseDetail(curCourseForOverride.id, curCourseForOverride.dateStr);
+}
+
+function toggleActive(id) {
+  const c = data.courses.find(x=>x.id===id); if (!c) return;
+  c.active = !c.active; saveData(); render();
+  showCourseDetail(id, curCourseForOverride ? curCourseForOverride.dateStr : null);
+}
+
+/* --- 编辑课程 --- */
+function openEditCourse(id) {
+  const c = data.courses.find(x=>x.id===id); if (!c) return;
+  const cols = COURSE_COLORS.map((col,i)=>`<div class="swatch ${col.c===c.color?'sel':''}" style="background:${col.c}" data-color="${col.c}"></div>`).join('');
+  openModal(`
+    <button class="close" onclick="closeModal()">×</button>
+    <h2>编辑课程</h2>
+    <div class="sub">${esc(c.code)}</div>
+    <div class="form">
+      <div class="field"><label>课程代号</label><input type="text" id="eCode" value="${esc(c.code)}"></div>
+      <div class="field"><label>简称(显示在卡片)</label><input type="text" id="eShort" value="${esc(c.short)}"></div>
+      <div class="field"><label>全称</label><input type="text" id="eName" value="${esc(c.name)}"></div>
+      <div class="field"><label>教师</label><input type="text" id="eIns" value="${esc(c.instructor)}"></div>
+      <div class="field-row">
+        <div class="field"><label>星期</label>
+          <select id="eDay">${[1,2,3,4,5,6,7].map(d=>`<option value="${d}" ${d===c.day?'selected':''}>每${DAY_NAMES[d]}</option>`).join('')}</select>
+        </div>
+        <div class="field"><label>核心必修</label>
+          <select id="eCore"><option value="0" ${!c.core?'selected':''}>否</option><option value="1" ${c.core?'selected':''}>是</option></select>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>开始</label><input type="time" id="eStart" value="${c.start}"></div>
+        <div class="field"><label>结束</label><input type="time" id="eEnd" value="${c.end}"></div>
+      </div>
+      <div class="field"><label>地点</label><input type="text" id="eRoom" value="${esc(c.room)}"></div>
+      <div class="field"><label>描述</label><textarea id="eDesc" rows="3">${esc(c.description||'')}</textarea></div>
+      <div class="field"><label>颜色</label><div class="swatches" id="eSwatches">${cols}</div></div>
+      <div style="display:flex;gap:8px">
+        <button class="btn primary" style="flex:1" onclick="saveEditCourse('${id}')">保存</button>
+        <button class="btn danger" onclick="deleteCourse('${id}')">删除课程</button>
+      </div>
+    </div>
+  `);
+  document.querySelectorAll('#eSwatches .swatch').forEach(s=>{
+    s.onclick = ()=>{ document.querySelectorAll('#eSwatches .swatch').forEach(x=>x.classList.remove('sel')); s.classList.add('sel'); };
+  });
+}
+function saveEditCourse(id) {
+  const c = data.courses.find(x=>x.id===id); if (!c) return;
+  c.code = document.getElementById('eCode').value;
+  c.short = document.getElementById('eShort').value;
+  c.name = document.getElementById('eName').value;
+  c.instructor = document.getElementById('eIns').value;
+  c.day = parseInt(document.getElementById('eDay').value);
+  c.core = document.getElementById('eCore').value === '1';
+  c.start = document.getElementById('eStart').value;
+  c.end = document.getElementById('eEnd').value;
+  c.room = document.getElementById('eRoom').value;
+  c.description = document.getElementById('eDesc').value;
+  const sel = document.querySelector('#eSwatches .swatch.sel');
+  if (sel) { c.color = sel.dataset.color; c.bg = (COURSE_COLORS.find(x=>x.c===c.color)||{bg:'#f1f5f9'}).bg; }
+  saveData(); render();
+  showCourseDetail(id, curCourseForOverride ? curCourseForOverride.dateStr : null);
+}
+function deleteCourse(id) {
+  if (!confirm('确定删除这门课程？(可用导入备份恢复)')) return;
+  data.courses = data.courses.filter(x=>x.id!==id);
+  saveData(); render(); closeModal();
+}
+
+/* --- 事件 --- */
+function openEventForm(dateStr, startTime) {
+  const isNew = true;
+  const start = startTime || '14:00';
+  openModal(`
+    <button class="close" onclick="closeModal()">×</button>
+    <h2>添加日程</h2>
+    <div class="sub">自由事件 · 讲座/DDL/会议等</div>
+    <div class="form">
+      <div class="field"><label>标题</label><input type="text" id="evTitle" placeholder="例如：ML 作业 DDL"></div>
+      <div class="field"><label>日期</label><input type="date" id="evDate" value="${dateStr||fmt(today())}"></div>
+      <div class="field-row">
+        <div class="field"><label>开始</label><input type="time" id="evStart" value="${start}"></div>
+        <div class="field"><label>结束(可空)</label><input type="time" id="evEnd"></div>
+      </div>
+      <div class="field"><label>地点/备注</label><input type="text" id="evLoc"></div>
+      <button class="btn primary" onclick="saveEvent()">保存</button>
+    </div>
+  `);
+}
+function openEditEvent(id) {
+  const ev = data.events.find(x=>x.id===id); if (!ev) return;
+  openModal(`
+    <button class="close" onclick="closeModal()">×</button>
+    <h2>编辑日程</h2>
+    <div class="form">
+      <div class="field"><label>标题</label><input type="text" id="evTitle" value="${esc(ev.title)}"></div>
+      <div class="field"><label>日期</label><input type="date" id="evDate" value="${ev.date}"></div>
+      <div class="field-row">
+        <div class="field"><label>开始</label><input type="time" id="evStart" value="${ev.start}"></div>
+        <div class="field"><label>结束(可空)</label><input type="time" id="evEnd" value="${ev.end||''}"></div>
+      </div>
+      <div class="field"><label>地点/备注</label><input type="text" id="evLoc" value="${esc(ev.location||'')}"></div>
+      <div style="display:flex;gap:8px">
+        <button class="btn primary" style="flex:1" onclick="saveEvent('${id}')">保存</button>
+        <button class="btn danger" onclick="deleteEvent('${id}')">删除</button>
+      </div>
+    </div>
+  `);
+}
+function saveEvent(id) {
+  const title = document.getElementById('evTitle').value.trim();
+  if (!title) { alert('请填写标题'); return; }
+  const date = document.getElementById('evDate').value;
+  const start = document.getElementById('evStart').value;
+  const end = document.getElementById('evEnd').value;
+  const location = document.getElementById('evLoc').value.trim();
+  if (id) {
+    const ev = data.events.find(x=>x.id===id);
+    Object.assign(ev, { title, date, start, end, location });
+  } else {
+    data.events.push({ id:uid(), title, date, start, end, location, color:'#94a3b8' });
+  }
+  saveData(); render(); closeModal();
+}
+function deleteEvent(id) {
+  if (!confirm('删除此日程？')) return;
+  data.events = data.events.filter(x=>x.id!==id);
+  saveData(); render(); closeModal();
+}
+
+/* ================= 导入导出 ================= */
+function exportJSON() {
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type:'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'hkust-schedule-backup.json'; a.click();
+  URL.revokeObjectURL(url);
+}
+function importJSON(file) {
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    try {
+      const obj = JSON.parse(reader.result);
+      if (!obj.courses) { alert('格式不正确'); return; }
+      data = obj; saveData(); render();
+    } catch(e) { alert('导入失败：' + e.message); }
+  };
+  reader.readAsText(file);
+}
+
+/* ================= 事件绑定 ================= */
+document.getElementById('prevWeek').onclick = ()=>{ anchor = addDays(anchor,-7); render(); };
+document.getElementById('nextWeek').onclick = ()=>{ anchor = addDays(anchor,7); render(); };
+document.getElementById('btnToday').onclick = ()=>{ anchor = mondayOf(today()); render(); };
+document.getElementById('btnAdd').onclick = ()=>{ openEventForm(fmt(today()), '14:00'); };
+document.getElementById('btnExport').onclick = exportJSON;
+document.getElementById('btnImport').onclick = ()=>document.getElementById('fileInput').click();
+document.getElementById('fileInput').onchange = (e)=>{ if(e.target.files[0]) importJSON(e.target.files[0]); e.target.value=''; };
+document.getElementById('overlay').onclick = (e)=>{ if(e.target.id==='overlay') closeModal(); };
+
+// 全局点击委托(课程/事件卡片)
+document.addEventListener('click', (e)=>{
+  const cell = e.target.closest('[data-course]');
+  if (cell) { showCourseDetail(cell.dataset.course, cell.dataset.date, cell.dataset.from || undefined); return; }
+  const ev = e.target.closest('[data-event]');
+  if (ev) { openEditEvent(ev.dataset.event); return; }
+  const add = e.target.closest('[data-add]');
+  if (add) { openEventForm(add.dataset.add, '14:00'); }
+});
+
+// 桌面点空白添加
+document.getElementById('gridBody').addEventListener('click', (e)=>{
+  const col = e.target.closest('.day-col');
+  if (!col) return;
+  // 若点到了卡片则不处理(卡片已冒泡处理)
+  if (e.target.closest('.cell')) return;
+  const dateStr = col.dataset.date;
+  const HOUR_H = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--hour-h'));
+  const START = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--day-start'));
+  const rect = col.getBoundingClientRect();
+  const y = e.clientY - rect.top;
+  const min = START*60 + Math.floor(y/HOUR_H*60);
+  const startTime = m2t(Math.max(min, START*60));
+  openEventForm(dateStr, startTime);
+});
+
+/* ================= 响应式重渲染 ================= */
+let resizeTimer;
+window.addEventListener('resize', ()=>{
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(()=>render(), 200);
+});
+
+/* ================= 启动 ================= */
+loadData();
+anchor = mondayOf(today());
+// 若今天在学期外,锚到学期开始周
+if (fmt(anchor) > '2026-12-19') anchor = mondayOf(parseDate('2026-09-01'));
+render();
+</script>
+</body>
+</html>
