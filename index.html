@@ -8,6 +8,10 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>HKUST MSc(AI) 课程日历</title>
 <script src="schedule-data.js"></script>
+<script src="firebase-config.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <style>
   :root {
     --bg: #eef1f6;
@@ -62,6 +66,12 @@
   .btn.danger { color: #dc2626; border-color: #fecaca; }
   .btn.danger:hover { background: #fef2f2; border-color: #fca5a5; }
   .btn.icon { padding: 8px; border-radius: 10px; }
+  .sync-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 20px;
+    background: #f1f5f9; white-space: nowrap;
+  }
+  .sync-badge::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
 
   /* ===== 周导航 ===== */
   .weeknav {
@@ -225,6 +235,7 @@
       <span class="sub">Fall 2026 · 6 门课程 · 自由日程</span>
     </div>
     <div class="spacer"></div>
+    <span id="syncBadge" class="sync-badge" style="display:none"></span>
     <button class="btn icon" id="btnExport" title="导出 JSON 备份">⤓</button>
     <button class="btn icon" id="btnImport" title="导入 JSON">⤒</button>
     <button class="btn primary" id="btnAdd">＋ 添加日程</button>
@@ -273,7 +284,6 @@ const COURSE_COLORS = [
 const DAY_NAMES = ['周日','周一','周二','周三','周四','周五','周六'];
 const DAY_SHORT = ['日','一','二','三','四','五','六'];
 
-let data = null;
 let anchor = null;      // 当前周锚点(周一)
 let curCourseForOverride = null;
 
@@ -292,20 +302,67 @@ function uid() { return 'id'+Date.now().toString(36)+Math.random().toString(36).
 function esc(s) { return String(s??'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
 /* ================= 状态 & 持久化 ================= */
+let data = null;
+let db = null;          // Firestore 实例
+let syncState = 'off';  // off | loading | syncing | online | offline
+let localDirty = false; // 本地有未上云的改动
+
+// 从 schedule-data.js 读取种子(首次/云端空时用)
+function seedData() {
+  if (typeof SCHEDULE_SEED !== 'undefined' && SCHEDULE_SEED && SCHEDULE_SEED.courses) {
+    return JSON.parse(JSON.stringify(SCHEDULE_SEED));
+  }
+  return { semester:{}, courses: [], events: [] };
+}
+
 function loadData() {
+  // 先用 localStorage 兜底,保证离线/秒开也能看到内容
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) { data = JSON.parse(raw); if (data && data.courses) return; }
   } catch(e) {}
-  // 首次打开:从外部数据文件 schedule-data.js 的 SCHEDULE_SEED 载入
-  if (typeof SCHEDULE_SEED !== 'undefined' && SCHEDULE_SEED && SCHEDULE_SEED.courses) {
-    data = JSON.parse(JSON.stringify(SCHEDULE_SEED));
-  } else {
-    data = { semester:{}, courses: [], events: [] };
-  }
-  saveData();
+  data = seedData();
+  saveDataLocal();
 }
-function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+
+// 本地缓存(始终写,作为离线兜底)
+function saveDataLocal() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch(e) {} }
+
+// 保存:写本地缓存 + 若在线则推送到云端
+function saveData() {
+  saveDataLocal();
+  if (db && syncState === 'online') {
+    pushToCloud();
+  } else {
+    localDirty = true; // 离线时标记,等恢复在线再推
+  }
+}
+
+function pushToCloud() {
+  if (!db) return;
+  const ref = db.collection(FIREBASE_COLLECTION).doc(FIREBASE_DOC_ID);
+  ref.set({ data: data, updatedAt: Date.now() }, { merge: true })
+    .then(() => { localDirty = false; setSyncState('online'); })
+    .catch(err => { console.warn('推送到云端失败', err); setSyncState('offline'); localDirty = true; });
+}
+
+function setSyncState(s) { syncState = s; renderSyncBadge(); }
+
+/* --- 同步状态徽标 --- */
+function renderSyncBadge() {
+  const el = document.getElementById('syncBadge');
+  if (!el) return;
+  const map = {
+    loading: ['同步中…', '#94a3b8'],
+    online:  ['已同步', '#10b981'],
+    offline: ['离线·未同步', '#f59e0b'],
+    off:     ['', '#94a3b8'],
+  };
+  const [txt, color] = map[syncState] || map.off;
+  el.textContent = txt;
+  el.style.color = color;
+  el.style.display = txt ? 'inline-flex' : 'none';
+}
 
 /* ================= 周内上课日期计算 ================= */
 // 返回该课程在 anchor 这一周(周一~周日)的上课 Date(可能 null)
@@ -873,6 +930,70 @@ anchor = mondayOf(today());
 // 若今天在学期外,锚到学期开始周
 if (fmt(anchor) > '2026-12-19') anchor = mondayOf(parseDate('2026-09-01'));
 render();
+
+/* ================= Firebase 同步 ================= */
+function initFirebase() {
+  if (typeof firebase === 'undefined' || typeof FIREBASE_CONFIG === 'undefined') {
+    console.warn('Firebase SDK 未加载,运行于纯本地模式');
+    setSyncState('off');
+    return;
+  }
+  try {
+    firebase.initializeApp(FIREBASE_CONFIG);
+    db = firebase.firestore();
+    const auth = firebase.auth();
+    setSyncState('loading');
+
+    // 匿名登录,登录后开始监听云端文档
+    auth.signInAnonymously().catch(err => {
+      console.warn('匿名登录失败,仍尝试监听', err);
+      startListening();
+    });
+
+    auth.onAuthStateChanged(user => {
+      if (user) startListening();
+    });
+  } catch(e) {
+    console.warn('Firebase 初始化失败', e);
+    setSyncState('off');
+  }
+}
+
+function startListening() {
+  if (!db) return;
+  const ref = db.collection(FIREBASE_COLLECTION).doc(FIREBASE_DOC_ID);
+  ref.onSnapshot((snap) => {
+    if (!snap.exists) {
+      // 云端还没有数据:把本地(种子)推上去作为首次初始化
+      pushToCloud();
+      return;
+    }
+    const remote = snap.data();
+    const remoteData = remote && remote.data;
+    if (!remoteData || !remoteData.courses) return;
+
+    // 若本地有未上云的改动(离线期间),优先保留本地并推上去
+    if (localDirty) {
+      data = data; // 保留本地
+      pushToCloud();
+    } else {
+      data = remoteData;
+      saveDataLocal();
+    }
+    setSyncState('online');
+    render();
+  }, (err) => {
+    console.warn('云端监听失败', err);
+    setSyncState('offline');
+  });
+}
+
+// 页面关闭/隐藏时若有未同步改动,尝试补推
+window.addEventListener('beforeunload', ()=>{
+  if (localDirty && db && syncState === 'online') pushToCloud();
+});
+
+initFirebase();
 </script>
 </body>
 </html>

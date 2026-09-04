@@ -1,7 +1,31 @@
 # 课程日历 — 托管与同步方案决策文档
 
-> 记录时间:2026-09-04
-> 状态:方案已讨论确定,后续工作暂停,待用户指示再开展。
+> 记录时间:2026-09-04(最后更新:Firebase 同步已落地)
+> 状态:托管已完成(GitHub Pages);同步已采用 Firebase 方案,代码已实现,待完成控制台配置。
+
+---
+
+## 〇、已落地的方案(2026-09-04 更新)
+
+### 托管
+- GitHub Pages:https://naateee.github.io/schedule-app/
+- 仓库:https://github.com/naateee/schedule-app
+
+### 同步(采用 Firebase)
+- 项目:schedule-calendar-e9756
+- 数据存 Firestore `schedules/main` 单一文档,onSnapshot 实时监听
+- 匿名登录(signInAnonymously)+ 安全规则 `allow read, write: if request.auth != null`
+- 本地 localStorage 作为离线兜底缓存
+- 文件结构:
+  - `index.html` —— 模板 + 逻辑(已含 Firebase 接入)
+  - `schedule-data.js` —— 课程种子数据
+  - `firebase-config.js` —— Firebase 配置(公开信息)
+
+### 同步机制要点
+- 打开页面 → 匿名登录 → onSnapshot 监听云端文档
+- 任意端改动 → saveData() 写本地 + 推送云端 → 云端 onSnapshot 推给其它端 → 即时 render
+- 离线时改动标记 localDirty,恢复在线后补推
+- 云端为空时,用本地种子初始化并推上去
 
 ---
 
