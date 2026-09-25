@@ -8,6 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>HKUST MSc(AI) 课程日历</title>
 <script src="schedule-data.js"></script>
+<script src="assignment-utils.js"></script>
 <script src="firebase-config.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
@@ -211,6 +212,35 @@
 
   .hint { font-size: 12px; color: var(--ink-soft); }
 
+  /* ===== 主视图切换 + 作业列表 ===== */
+  .view-tabs { display: flex; gap: 4px; padding: 4px; background: #e2e8f0; border-radius: 12px; margin: 0 auto 14px; width: fit-content; }
+  .view-tab { padding: 7px 16px; border-radius: 9px; font-size: 13px; font-weight: 700; color: var(--ink-soft); }
+  .view-tab.active { background: var(--panel); color: var(--ink); box-shadow: 0 1px 3px rgba(15,23,42,.12); }
+  .view-panel[hidden] { display: none !important; }
+  .assignment-toolbar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+  .assignment-toolbar select { padding: 8px 10px; border: 1px solid var(--line); border-radius: 9px; background: var(--panel); color: var(--ink); }
+  .assignment-summary { margin-left: auto; font-size: 13px; color: var(--ink-soft); font-weight: 600; }
+  .assignment-list { display: flex; flex-direction: column; gap: 10px; }
+  .assignment-card { display: grid; grid-template-columns: 6px minmax(0,1fr) auto; gap: 14px; align-items: stretch; padding: 15px; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); }
+  .assignment-card.done { opacity: .66; }
+  .assignment-card.done .assignment-title { text-decoration: line-through; }
+  .assignment-bar { border-radius: 6px; background: var(--course-color, #94a3b8); }
+  .assignment-main { min-width: 0; }
+  .assignment-top { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; margin-bottom: 4px; }
+  .assignment-course { color: var(--course-color, #64748b); font-size: 12px; font-weight: 800; }
+  .assignment-kind, .assignment-source { font-size: 11px; color: var(--ink-soft); background: #f1f5f9; padding: 2px 7px; border-radius: 20px; }
+  .assignment-title { font-size: 16px; font-weight: 750; overflow-wrap: anywhere; }
+  .assignment-meta { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 5px; font-size: 12px; color: var(--ink-soft); }
+  .assignment-due.overdue { color: #dc2626; font-weight: 800; }
+  .assignment-due.soon { color: #d97706; font-weight: 800; }
+  .assignment-desc { margin-top: 7px; font-size: 13px; color: #475569; white-space: pre-wrap; }
+  .assignment-actions { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; justify-content: flex-end; }
+  .assignment-actions .status-select { padding: 7px 9px; border: 1px solid var(--line); border-radius: 8px; background: #f8fafc; }
+  .assignment-empty { padding: 48px 20px; text-align: center; background: var(--panel); border: 1px dashed #cbd5e1; border-radius: var(--radius); color: var(--ink-soft); }
+  .source-link { color: #2563eb; text-decoration: none; font-weight: 650; }
+  .source-link:hover { text-decoration: underline; }
+  .field-error { color: #dc2626; font-size: 12px; font-weight: 600; }
+
   /* ===== 响应式断点 ===== */
   @media (max-width: 767px) {
     .desktop-view { display: none; }
@@ -220,6 +250,11 @@
     .brand h1 { font-size: 16px; }
     .btn { padding: 7px 11px; font-size: 13px; }
     .weeknav .range { min-width: 0; font-size: 14px; }
+    .topbar .brand .sub { display: none; }
+    .assignment-card { grid-template-columns: 5px minmax(0,1fr); gap: 10px; padding: 13px; }
+    .assignment-actions { grid-column: 2; justify-content: flex-start; }
+    .assignment-toolbar select { flex: 1; min-width: 120px; }
+    .assignment-summary { width: 100%; margin-left: 0; }
   }
   @media (min-width: 768px) {
     .desktop-view { display: block; }
@@ -241,25 +276,50 @@
     <button class="btn primary" id="btnAdd">＋ 添加日程</button>
   </div>
 
-  <div class="weeknav">
-    <button class="navbtn" id="prevWeek" title="上一周">‹</button>
-    <div class="range" id="rangeLabel"></div>
-    <button class="navbtn" id="nextWeek" title="下一周">›</button>
-    <button class="today-btn" id="btnToday">今天</button>
+  <div class="view-tabs" role="tablist" aria-label="主视图">
+    <button class="view-tab active" id="tabSchedule" role="tab" aria-selected="true">课程表</button>
+    <button class="view-tab" id="tabAssignments" role="tab" aria-selected="false">作业与 Project</button>
   </div>
 
-  <!-- 桌面视图 -->
-  <div class="desktop-view" id="desktopView">
-    <div class="grid-wrap">
-      <div class="grid-head" id="gridHead"></div>
-      <div class="grid-body-wrap" id="gridBodyWrap">
-        <div class="grid-body" id="gridBody"></div>
+  <section class="view-panel" id="schedulePanel">
+    <div class="weeknav">
+      <button class="navbtn" id="prevWeek" title="上一周">‹</button>
+      <div class="range" id="rangeLabel"></div>
+      <button class="navbtn" id="nextWeek" title="下一周">›</button>
+      <button class="today-btn" id="btnToday">今天</button>
+    </div>
+
+    <!-- 桌面视图 -->
+    <div class="desktop-view" id="desktopView">
+      <div class="grid-wrap">
+        <div class="grid-head" id="gridHead"></div>
+        <div class="grid-body-wrap" id="gridBodyWrap">
+          <div class="grid-body" id="gridBody"></div>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- 移动视图 -->
-  <div class="mobile-view" id="mobileView"></div>
+    <!-- 移动视图 -->
+    <div class="mobile-view" id="mobileView"></div>
+  </section>
+
+  <section class="view-panel" id="assignmentsPanel" hidden>
+    <div class="assignment-toolbar">
+      <select id="assignmentStatusFilter" aria-label="按状态筛选">
+        <option value="all">全部状态</option><option value="open">未完成</option>
+        <option value="done">已完成</option><option value="overdue">已逾期</option>
+      </select>
+      <select id="assignmentCourseFilter" aria-label="按课程筛选"></select>
+      <select id="assignmentTypeFilter" aria-label="按类型筛选">
+        <option value="all">全部类型</option><option value="assignment">Assignment</option>
+        <option value="project">Project</option><option value="quiz">Quiz</option>
+        <option value="report">Report</option><option value="presentation">Presentation</option>
+        <option value="other">其他</option>
+      </select>
+      <span class="assignment-summary" id="assignmentSummary"></span>
+    </div>
+    <div class="assignment-list" id="assignmentList"></div>
+  </section>
 </div>
 
 <div class="overlay" id="overlay">
@@ -286,6 +346,11 @@ const DAY_SHORT = ['日','一','二','三','四','五','六'];
 
 let anchor = null;      // 当前周锚点(周一)
 let curCourseForOverride = null;
+let currentView = 'schedule';
+const assignmentFilters = { status:'all', courseId:'all', type:'all' };
+const TYPE_LABELS = { assignment:'Assignment', project:'Project', quiz:'Quiz', report:'Report', presentation:'Presentation', other:'其他' };
+const STATUS_LABELS = { todo:'未开始', doing:'进行中', done:'已完成' };
+const SOURCE_LABELS = { canvas:'Canvas', 'course-website':'课程官网', manual:'手动添加' };
 
 /* ================= 工具函数 ================= */
 function fmt(d) { // Date -> 'YYYY-MM-DD'
@@ -306,22 +371,37 @@ let data = null;
 let db = null;          // Firestore 实例
 let syncState = 'off';  // off | loading | syncing | online | offline
 let localDirty = false; // 本地有未上云的改动
+let cloudSeedMigrationPending = false; // 旧云端数据缺 assignments,本次需补写迁移结果
 
 // 从 schedule-data.js 读取种子(首次/云端空时用)
 function seedData() {
   if (typeof SCHEDULE_SEED !== 'undefined' && SCHEDULE_SEED && SCHEDULE_SEED.courses) {
     return JSON.parse(JSON.stringify(SCHEDULE_SEED));
   }
-  return { semester:{}, courses: [], events: [] };
+  return { semester:{}, courses: [], events: [], assignments: [] };
+}
+
+function migrateAppData(input) {
+  const hadAssignments = !!(input && Object.prototype.hasOwnProperty.call(input, 'assignments'));
+  const migrated = AssignmentUtils.migrateData(input);
+  if (!hadAssignments) {
+    const seed = seedData();
+    migrated.assignments = Array.isArray(seed.assignments) ? JSON.parse(JSON.stringify(seed.assignments)) : [];
+  }
+  migrated.assignments = migrated.assignments.map(AssignmentUtils.normalizeAssignment);
+  return migrated;
 }
 
 function loadData() {
   // 先用 localStorage 兜底,保证离线/秒开也能看到内容
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) { data = JSON.parse(raw); if (data && data.courses) return; }
+    if (raw) {
+      data = migrateAppData(JSON.parse(raw));
+      if (data && data.courses) { saveDataLocal(); return; }
+    }
   } catch(e) {}
-  data = seedData();
+  data = migrateAppData(seedData());
   saveDataLocal();
 }
 
@@ -557,6 +637,135 @@ function renderMobile() {
     html += '</div>';
   }
   el.innerHTML = html;
+}
+
+/* ================= 作业 / Project ================= */
+function switchView(view) {
+  currentView = view;
+  const assignments = view === 'assignments';
+  document.getElementById('schedulePanel').hidden = assignments;
+  document.getElementById('assignmentsPanel').hidden = !assignments;
+  document.getElementById('tabSchedule').classList.toggle('active', !assignments);
+  document.getElementById('tabAssignments').classList.toggle('active', assignments);
+  document.getElementById('tabSchedule').setAttribute('aria-selected', String(!assignments));
+  document.getElementById('tabAssignments').setAttribute('aria-selected', String(assignments));
+  const add = document.getElementById('btnAdd');
+  add.textContent = assignments ? '＋ 添加作业' : '＋ 添加日程';
+  if (assignments) renderAssignments();
+}
+
+function formatDueAt(value) {
+  if (!value) return '未设置';
+  return new Intl.DateTimeFormat('zh-CN', {month:'short', day:'numeric', weekday:'short', hour:'2-digit', minute:'2-digit', hour12:false}).format(new Date(value));
+}
+
+function renderAssignmentFilters() {
+  const select = document.getElementById('assignmentCourseFilter');
+  const active = assignmentFilters.courseId;
+  select.innerHTML = '<option value="all">全部课程</option>' + data.courses.filter(c=>c.active).map(c=>`<option value="${esc(c.id)}">${esc(c.code)}</option>`).join('');
+  select.value = data.courses.some(c=>c.id===active) ? active : 'all';
+}
+
+function renderAssignments() {
+  renderAssignmentFilters();
+  const all = data.assignments || [];
+  const visible = AssignmentUtils.sortAssignments(AssignmentUtils.filterAssignments(all, assignmentFilters));
+  const openCount = all.filter(a=>a.status!=='done').length;
+  document.getElementById('assignmentSummary').textContent = `${visible.length} 条结果 · ${openCount} 条未完成`;
+  const list = document.getElementById('assignmentList');
+  if (!visible.length) {
+    list.innerHTML = '<div class="assignment-empty">当前筛选条件下没有任务</div>';
+    return;
+  }
+  list.innerHTML = visible.map(a=>{
+    const c = data.courses.find(x=>x.id===a.courseId) || {code:'未知课程',color:'#94a3b8'};
+    const dueText = AssignmentUtils.dueLabel(a.dueAt, a.status);
+    const dueMs = a.dueAt ? new Date(a.dueAt).getTime() - Date.now() : Infinity;
+    const dueClass = a.status!=='done' && dueMs < 0 ? 'overdue' : (a.status!=='done' && dueMs <= 3*86400000 ? 'soon' : '');
+    const source = a.sourceUrl
+      ? `<a class="source-link" href="${esc(a.sourceUrl)}" target="_blank" rel="noopener noreferrer">${esc(SOURCE_LABELS[a.sourceType]||'来源')} ↗</a>`
+      : `<span>${esc(SOURCE_LABELS[a.sourceType]||'手动添加')}</span>`;
+    return `<article class="assignment-card ${a.status==='done'?'done':''}" style="--course-color:${esc(c.color)}">
+      <div class="assignment-bar"></div>
+      <div class="assignment-main">
+        <div class="assignment-top"><span class="assignment-course">${esc(c.code)}</span><span class="assignment-kind">${esc(TYPE_LABELS[a.type]||'其他')}</span><span class="assignment-source">${source}</span></div>
+        <div class="assignment-title">${esc(a.title)}</div>
+        <div class="assignment-meta"><span>截止：${esc(formatDueAt(a.dueAt))}</span><span class="assignment-due ${dueClass}">${esc(dueText)}</span></div>
+        ${a.description?`<div class="assignment-desc">${esc(a.description)}</div>`:''}
+      </div>
+      <div class="assignment-actions">
+        <select class="status-select" aria-label="更改 ${esc(a.title)} 状态" onchange="setAssignmentStatus('${esc(a.id)}',this.value)">
+          ${Object.entries(STATUS_LABELS).map(([v,l])=>`<option value="${v}" ${v===a.status?'selected':''}>${l}</option>`).join('')}
+        </select>
+        <button class="btn small" onclick="openAssignmentForm('${esc(a.id)}')">编辑</button>
+      </div>
+    </article>`;
+  }).join('');
+}
+
+function localDateTimeValue(value) {
+  if (!value) return '';
+  const d = new Date(value), pad=n=>String(n).padStart(2,'0');
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+function openAssignmentForm(id) {
+  const existing = id ? data.assignments.find(a=>a.id===id) : null;
+  const a = existing || AssignmentUtils.normalizeAssignment({id:uid(), type:'assignment', status:'todo', sourceType:'manual'});
+  const courseOptions = data.courses.filter(c=>c.active).map(c=>`<option value="${esc(c.id)}" ${c.id===a.courseId?'selected':''}>${esc(c.code)} · ${esc(c.short)}</option>`).join('');
+  openModal(`
+    <button class="close" onclick="closeModal()">×</button>
+    <h2>${existing?'编辑':'添加'}作业 / Project</h2>
+    <div class="sub">手动维护，保存后自动同步到其他设备</div>
+    <div class="form">
+      <div id="assignmentErrors" class="field-error"></div>
+      <div class="field"><label>课程</label><select id="asCourse"><option value="">请选择课程</option>${courseOptions}</select></div>
+      <div class="field"><label>标题</label><input id="asTitle" value="${esc(a.title)}" placeholder="例如：Assignment 2"></div>
+      <div class="field-row">
+        <div class="field"><label>类型</label><select id="asType">${Object.entries(TYPE_LABELS).map(([v,l])=>`<option value="${v}" ${v===a.type?'selected':''}>${l}</option>`).join('')}</select></div>
+        <div class="field"><label>状态</label><select id="asStatus">${Object.entries(STATUS_LABELS).map(([v,l])=>`<option value="${v}" ${v===a.status?'selected':''}>${l}</option>`).join('')}</select></div>
+      </div>
+      <div class="field"><label>截止时间</label><input type="datetime-local" id="asDue" value="${esc(localDateTimeValue(a.dueAt))}"></div>
+      <div class="field"><label>来源</label><select id="asSource">${Object.entries(SOURCE_LABELS).map(([v,l])=>`<option value="${v}" ${v===a.sourceType?'selected':''}>${l}</option>`).join('')}</select></div>
+      <div class="field"><label>来源链接（可空）</label><input type="url" id="asUrl" value="${esc(a.sourceUrl)}" placeholder="https://..."></div>
+      <div class="field"><label>说明 / 提交要求</label><textarea id="asDesc" rows="4">${esc(a.description)}</textarea></div>
+      <div style="display:flex;gap:8px">
+        <button class="btn primary" style="flex:1" onclick="saveAssignment('${esc(a.id)}',${existing?'true':'false'})">保存</button>
+        ${existing?`<button class="btn danger" onclick="deleteAssignment('${esc(a.id)}')">删除</button>`:''}
+      </div>
+    </div>`);
+}
+
+function saveAssignment(id, existed) {
+  const previous = existed ? data.assignments.find(a=>a.id===id) : null;
+  const draft = {
+    ...(previous||{}), id,
+    courseId:document.getElementById('asCourse').value,
+    title:document.getElementById('asTitle').value,
+    type:document.getElementById('asType').value,
+    status:document.getElementById('asStatus').value,
+    dueAt:document.getElementById('asDue').value,
+    sourceType:document.getElementById('asSource').value,
+    sourceUrl:document.getElementById('asUrl').value,
+    description:document.getElementById('asDesc').value,
+    createdAt:previous?.createdAt || new Date().toISOString(), updatedAt:new Date().toISOString()
+  };
+  const checked = AssignmentUtils.validateAssignment(draft, data.courses);
+  if (checked.errors.length) { document.getElementById('assignmentErrors').textContent = checked.errors.join('；'); return; }
+  if (previous) Object.assign(previous, checked.value); else data.assignments.push(checked.value);
+  saveData(); renderAssignments(); closeModal();
+}
+
+function setAssignmentStatus(id, status) {
+  const a = data.assignments.find(x=>x.id===id); if (!a) return;
+  a.status = status; a.updatedAt = new Date().toISOString();
+  saveData(); renderAssignments();
+}
+
+function deleteAssignment(id) {
+  if (!confirm('确定删除这条作业记录？')) return;
+  data.assignments = data.assignments.filter(a=>a.id!==id);
+  saveData(); renderAssignments(); closeModal();
 }
 
 /* ================= 弹窗 ================= */
@@ -875,7 +1084,7 @@ function importJSON(file) {
     try {
       const obj = JSON.parse(reader.result);
       if (!obj.courses) { alert('格式不正确'); return; }
-      data = obj; saveData(); render();
+      data = migrateAppData(obj); saveData(); render(); renderAssignments();
     } catch(e) { alert('导入失败：' + e.message); }
   };
   reader.readAsText(file);
@@ -885,7 +1094,12 @@ function importJSON(file) {
 document.getElementById('prevWeek').onclick = ()=>{ anchor = addDays(anchor,-7); render(); };
 document.getElementById('nextWeek').onclick = ()=>{ anchor = addDays(anchor,7); render(); };
 document.getElementById('btnToday').onclick = ()=>{ anchor = mondayOf(today()); render(); };
-document.getElementById('btnAdd').onclick = ()=>{ openEventForm(fmt(today()), '14:00'); };
+document.getElementById('btnAdd').onclick = ()=>{ currentView==='assignments' ? openAssignmentForm() : openEventForm(fmt(today()), '14:00'); };
+document.getElementById('tabSchedule').onclick = ()=>switchView('schedule');
+document.getElementById('tabAssignments').onclick = ()=>switchView('assignments');
+document.getElementById('assignmentStatusFilter').onchange = e=>{ assignmentFilters.status=e.target.value; renderAssignments(); };
+document.getElementById('assignmentCourseFilter').onchange = e=>{ assignmentFilters.courseId=e.target.value; renderAssignments(); };
+document.getElementById('assignmentTypeFilter').onchange = e=>{ assignmentFilters.type=e.target.value; renderAssignments(); };
 document.getElementById('btnExport').onclick = exportJSON;
 document.getElementById('btnImport').onclick = ()=>document.getElementById('fileInput').click();
 document.getElementById('fileInput').onchange = (e)=>{ if(e.target.files[0]) importJSON(e.target.files[0]); e.target.value=''; };
@@ -933,6 +1147,8 @@ render();
 
 /* ================= Firebase 同步 ================= */
 function initFirebase() {
+  // 自动化测试模式仅使用 localStorage，避免测试数据写入正式 Firestore
+  if (new URLSearchParams(location.search).has('test')) { setSyncState('off'); return; }
   if (typeof firebase === 'undefined' || typeof FIREBASE_CONFIG === 'undefined') {
     console.warn('Firebase SDK 未加载,运行于纯本地模式');
     setSyncState('off');
@@ -977,11 +1193,19 @@ function startListening() {
       render();
       return;
     }
-    // 正常:采用云端数据
-    data = remoteData;
+    // 正常:采用云端数据；旧云端文档自动迁移 assignments 字段并只补写一次
+    const missingAssignments = !Object.prototype.hasOwnProperty.call(remoteData, 'assignments');
+    data = migrateAppData(remoteData);
     saveDataLocal();
     setSyncState('online');
     render();
+    if (currentView === 'assignments') renderAssignments();
+    if (missingAssignments && !cloudSeedMigrationPending) {
+      cloudSeedMigrationPending = true;
+      ref.set({ data: data, updatedAt: Date.now() }, { merge: true })
+        .then(()=>{ cloudSeedMigrationPending = false; })
+        .catch(err=>{ console.warn('作业字段迁移上云失败', err); cloudSeedMigrationPending = false; setSyncState('offline'); });
+    }
   }, (err) => {
     console.warn('云端监听失败', err);
     setSyncState('offline');

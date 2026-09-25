@@ -7,3 +7,5 @@ desktop.ini
 # 本地校验/临时脚本
 _check_*.js
 *.tmp
+backups/
+__pycache__/

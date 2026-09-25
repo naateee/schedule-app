@@ -30,7 +30,7 @@
 | Mon | ARIN 5203 | Foundation Models & Gen AI | Qifeng CHEN | 19:00-21:50 | 4619 | |
 | Tue | ARIN 5101 | Advanced Python for AI | Gibson LAM | 19:00-21:50 | LT-C | ✓ |
 | Wed | ARIN 5202 | ML for NLP | Wei XUE | 19:00-21:50 | CYTG010 | |
-| Thu | ARIN 5305 | AI in Software Eng | Shing-Chi CHEUNG | 19:00-21:50 | CYTG002 | |
+| Thu | ~~ARIN 5305~~ | AI in Software Eng ⛔已退课(2026-09-11) | Shing-Chi CHEUNG | 19:00-21:50 | CYTG002 | |
 | Fri | ARIN 5201 | ML for Computer Vision | Wenhan LUO | 19:00-21:50 | LSKG012 | |
 | Sat | ARIN 5102 | AI Fundamentals | Fangzhen LIN | 14:30-17:20 | 2502 | ✓ |
 
@@ -44,6 +44,14 @@
 5. 每周 override:对某周单独改时间/地点/停课
 6. localStorage 持久化 + 导出/导入 JSON + 重置默认
 7. 移动端响应式 + PWA meta
+8. **作业与 Project 列表**:与课表切换,支持课程/类型/状态筛选、截止倒计时、来源链接、CRUD 与完成状态
+9. 作业数据采用人工维护:用户通知后查 Canvas / ARIN 5203 官网并添加,不做自动抓取
+
+## 作业数据模型(2026-09-25 增补)
+- `assignments[]`: `{id, courseId, title, type, dueAt, status, description, sourceType, sourceUrl, lastCheckedAt, createdAt, updatedAt}`
+- 旧版 localStorage / Firestore / JSON 没有 `assignments` 时自动迁移并装入当前种子任务;明确存在空数组时尊重用户删除结果
+- 初始真实数据:Canvas 3 条(其中 1 条已完成)+ ARIN 5203 官网 1 条
+- 作业数据与现有课程、事件一起保存在 Firestore `schedules/main` 文档,并参与 JSON 导入导出
 
 ## 目录与文件
 - `D:\hkust_center\schedule-app\index.html` — 全部内容(单文件)

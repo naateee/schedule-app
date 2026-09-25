@@ -16,6 +16,7 @@
 //                  {date, start, end, room 临时改时间地点}
 //                  {date, moveTo, start, end, room 调到另一天}
 //    events:   自由日程(标题+日期+起止+地点)
+//    assignments: 作业/Project 列表(课程、截止时间、状态与来源)
 // ============================================================
 
 // ============================================================
@@ -28,6 +29,64 @@
 
 const SCHEDULE_SEED = {
   "events": [],
+  "assignments": [
+    {
+      "id": "canvas-73253-455819",
+      "courseId": "c3",
+      "title": "Assignment 01",
+      "type": "assignment",
+      "dueAt": "2026-10-14T23:59:00+08:00",
+      "status": "todo",
+      "description": "Canvas：20 分，当前尚未提交。",
+      "sourceType": "canvas",
+      "sourceUrl": "https://canvas.ust.hk/courses/73253/assignments/455819",
+      "lastCheckedAt": "2026-09-25T13:50:00+08:00",
+      "createdAt": "2026-09-25T13:50:00+08:00",
+      "updatedAt": "2026-09-25T13:50:00+08:00"
+    },
+    {
+      "id": "canvas-73258-455423",
+      "courseId": "c5",
+      "title": "Proposal for the final project",
+      "type": "project",
+      "dueAt": "2026-10-17T23:59:00+08:00",
+      "status": "todo",
+      "description": "Canvas：Final Project Proposal，10 分，当前尚未提交。",
+      "sourceType": "canvas",
+      "sourceUrl": "https://canvas.ust.hk/courses/73258/assignments/455423",
+      "lastCheckedAt": "2026-09-25T13:50:00+08:00",
+      "createdAt": "2026-09-25T13:50:00+08:00",
+      "updatedAt": "2026-09-25T13:50:00+08:00"
+    },
+    {
+      "id": "canvas-71899-454598",
+      "courseId": "c6",
+      "title": "Assignment 1",
+      "type": "assignment",
+      "dueAt": "2026-09-28T23:59:00+08:00",
+      "status": "done",
+      "description": "Canvas：100 分；已按你的说明标记为完成。Canvas 当前显示 Not Yet Graded。",
+      "sourceType": "canvas",
+      "sourceUrl": "https://canvas.ust.hk/courses/71899/assignments/454598",
+      "lastCheckedAt": "2026-09-25T13:50:00+08:00",
+      "createdAt": "2026-09-25T13:50:00+08:00",
+      "updatedAt": "2026-09-25T13:50:00+08:00"
+    },
+    {
+      "id": "arin5203-assignment-1",
+      "courseId": "c1",
+      "title": "Assignment 1",
+      "type": "assignment",
+      "dueAt": "2026-10-05T23:59:00+08:00",
+      "status": "todo",
+      "description": "课程官网：2026-09-21 发布；提交包含结果的 Jupyter Notebook 至 Canvas。",
+      "sourceType": "course-website",
+      "sourceUrl": "https://cqf.io/ARIN5203/programs/",
+      "lastCheckedAt": "2026-09-25T13:50:00+08:00",
+      "createdAt": "2026-09-25T13:50:00+08:00",
+      "updatedAt": "2026-09-25T13:50:00+08:00"
+    }
+  ],
   "semester": {
     "start": "2026-09-01",
     "end": "2026-12-19",
