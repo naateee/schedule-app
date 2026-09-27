@@ -99,6 +99,48 @@ const SCHEDULE_SEED = {
       "lastCheckedAt": "2026-09-27T18:17:35+08:00",
       "createdAt": "2026-09-25T13:50:00+08:00",
       "updatedAt": "2026-09-25T13:50:00+08:00"
+    },
+    {
+      "id": "arin5203-project-1",
+      "courseId": "c1",
+      "title": "Project Proposal",
+      "type": "project",
+      "dueAt": "2026-10-05T23:59:00+08:00",
+      "status": "todo",
+      "description": "课程官网：项目提案 1 段（200-400 词），需说明问题与意义、背景阅读、数据来源、拟用方法、评估方式。可组队（≤3 人），组内仅需 1 人提交并在报告中注明成员姓名。项目组另有 8 个 late days（每个 deadline 最多用 4 个）。",
+      "sourceType": "course-website",
+      "sourceUrl": "https://cqf.io/ARIN5203/project.html",
+      "lastCheckedAt": "2026-09-28T01:33:28+08:00",
+      "createdAt": "2026-09-28T01:33:28+08:00",
+      "updatedAt": "2026-09-28T01:33:28+08:00"
+    },
+    {
+      "id": "arin5203-project-2",
+      "courseId": "c1",
+      "title": "Project Milestone",
+      "type": "project",
+      "dueAt": "2026-11-06T23:59:00+08:00",
+      "status": "todo",
+      "description": "课程官网：里程碑报告 2-3 页，使用提供的 CVPR 2022 LaTeX 模板；含标题/作者、引言、问题陈述、技术方案、中期结果。组内仅需 1 人提交并在报告中注明成员姓名。",
+      "sourceType": "course-website",
+      "sourceUrl": "https://cqf.io/ARIN5203/project.html",
+      "lastCheckedAt": "2026-09-28T01:33:28+08:00",
+      "createdAt": "2026-09-28T01:33:28+08:00",
+      "updatedAt": "2026-09-28T01:33:28+08:00"
+    },
+    {
+      "id": "arin5203-project-3",
+      "courseId": "c1",
+      "title": "Final Report",
+      "type": "project",
+      "dueAt": "2026-12-05T23:59:00+08:00",
+      "status": "todo",
+      "description": "课程官网：期末报告 6-8 页（CVPR 2022 模板，建议 LaTeX/Overleaf），另交独立文件的补充材料（代码/演示，不计入页数）。提交 PDF；组内仅需 1 人提交并注明成员姓名。",
+      "sourceType": "course-website",
+      "sourceUrl": "https://cqf.io/ARIN5203/project.html",
+      "lastCheckedAt": "2026-09-28T01:33:28+08:00",
+      "createdAt": "2026-09-28T01:33:28+08:00",
+      "updatedAt": "2026-09-28T01:33:28+08:00"
     }
   ],
   "semester": {
