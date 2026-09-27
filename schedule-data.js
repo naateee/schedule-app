@@ -40,7 +40,7 @@ const SCHEDULE_SEED = {
       "description": "Canvas：20 分，当前尚未提交。",
       "sourceType": "canvas",
       "sourceUrl": "https://canvas.ust.hk/courses/73253/assignments/455819",
-      "lastCheckedAt": "2026-09-25T13:50:00+08:00",
+      "lastCheckedAt": "2026-09-27T18:17:35+08:00",
       "createdAt": "2026-09-25T13:50:00+08:00",
       "updatedAt": "2026-09-25T13:50:00+08:00"
     },
@@ -54,9 +54,23 @@ const SCHEDULE_SEED = {
       "description": "Canvas：Final Project Proposal，10 分，当前尚未提交。",
       "sourceType": "canvas",
       "sourceUrl": "https://canvas.ust.hk/courses/73258/assignments/455423",
-      "lastCheckedAt": "2026-09-25T13:50:00+08:00",
+      "lastCheckedAt": "2026-09-27T18:17:35+08:00",
       "createdAt": "2026-09-25T13:50:00+08:00",
       "updatedAt": "2026-09-25T13:50:00+08:00"
+    },
+    {
+      "id": "canvas-73258-456261",
+      "courseId": "c5",
+      "title": "Assignment 1",
+      "type": "assignment",
+      "dueAt": "2026-10-18T23:30:00+08:00",
+      "status": "todo",
+      "description": "Canvas：10 分，个人作业；将答案整理为单个 PDF 上传，建议使用 LaTeX。2026-09-27 00:00 开放。",
+      "sourceType": "canvas",
+      "sourceUrl": "https://canvas.ust.hk/courses/73258/assignments/456261",
+      "lastCheckedAt": "2026-09-27T18:17:35+08:00",
+      "createdAt": "2026-09-27T18:17:35+08:00",
+      "updatedAt": "2026-09-27T18:17:35+08:00"
     },
     {
       "id": "canvas-71899-454598",
@@ -68,7 +82,7 @@ const SCHEDULE_SEED = {
       "description": "Canvas：100 分；已按你的说明标记为完成。Canvas 当前显示 Not Yet Graded。",
       "sourceType": "canvas",
       "sourceUrl": "https://canvas.ust.hk/courses/71899/assignments/454598",
-      "lastCheckedAt": "2026-09-25T13:50:00+08:00",
+      "lastCheckedAt": "2026-09-27T18:17:35+08:00",
       "createdAt": "2026-09-25T13:50:00+08:00",
       "updatedAt": "2026-09-25T13:50:00+08:00"
     },
@@ -82,7 +96,7 @@ const SCHEDULE_SEED = {
       "description": "课程官网：2026-09-21 发布；提交包含结果的 Jupyter Notebook 至 Canvas。",
       "sourceType": "course-website",
       "sourceUrl": "https://cqf.io/ARIN5203/programs/",
-      "lastCheckedAt": "2026-09-25T13:50:00+08:00",
+      "lastCheckedAt": "2026-09-27T18:17:35+08:00",
       "createdAt": "2026-09-25T13:50:00+08:00",
       "updatedAt": "2026-09-25T13:50:00+08:00"
     }
