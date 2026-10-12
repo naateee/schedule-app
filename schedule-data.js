@@ -36,13 +36,13 @@ const SCHEDULE_SEED = {
       "title": "Assignment 01",
       "type": "assignment",
       "dueAt": "2026-10-14T23:59:00+08:00",
-      "status": "todo",
-      "description": "Canvas：20 分，当前尚未提交。",
+      "status": "done",
+      "description": "Canvas：20 分，已于 2026-10-11 提交（Not Yet Graded）。",
       "sourceType": "canvas",
       "sourceUrl": "https://canvas.ust.hk/courses/73253/assignments/455819",
-      "lastCheckedAt": "2026-09-27T18:17:35+08:00",
+      "lastCheckedAt": "2026-10-12T14:53:13+08:00",
       "createdAt": "2026-09-25T13:50:00+08:00",
-      "updatedAt": "2026-09-25T13:50:00+08:00"
+      "updatedAt": "2026-10-12T14:53:13+08:00"
     },
     {
       "id": "canvas-73258-455423",
@@ -51,12 +51,12 @@ const SCHEDULE_SEED = {
       "type": "project",
       "dueAt": "2026-10-17T23:59:00+08:00",
       "status": "todo",
-      "description": "Canvas：Final Project Proposal，10 分，当前尚未提交。",
+      "description": "Canvas：Final Project Proposal，10 分，当前尚未提交。需按所附 Course Project Guidelines 组队 5–6 人（People → Groups → Teams for the final project 自助组队），组内 1 人提交并在报告中注明成员。",
       "sourceType": "canvas",
       "sourceUrl": "https://canvas.ust.hk/courses/73258/assignments/455423",
-      "lastCheckedAt": "2026-09-27T18:17:35+08:00",
+      "lastCheckedAt": "2026-10-12T14:53:13+08:00",
       "createdAt": "2026-09-25T13:50:00+08:00",
-      "updatedAt": "2026-09-25T13:50:00+08:00"
+      "updatedAt": "2026-10-12T14:53:13+08:00"
     },
     {
       "id": "canvas-73258-456261",
@@ -65,12 +65,12 @@ const SCHEDULE_SEED = {
       "type": "assignment",
       "dueAt": "2026-10-18T23:30:00+08:00",
       "status": "todo",
-      "description": "Canvas：10 分，个人作业；将答案整理为单个 PDF 上传，建议使用 LaTeX。2026-09-27 00:00 开放。",
+      "description": "Canvas：10 分，个人作业（须独立完成）；将答案整理为单个 PDF 上传，建议使用 LaTeX。2026-09-27 00:00 开放。",
       "sourceType": "canvas",
       "sourceUrl": "https://canvas.ust.hk/courses/73258/assignments/456261",
-      "lastCheckedAt": "2026-09-27T18:17:35+08:00",
+      "lastCheckedAt": "2026-10-12T14:53:13+08:00",
       "createdAt": "2026-09-27T18:17:35+08:00",
-      "updatedAt": "2026-09-27T18:17:35+08:00"
+      "updatedAt": "2026-10-12T14:53:13+08:00"
     },
     {
       "id": "canvas-71899-454598",
@@ -79,12 +79,12 @@ const SCHEDULE_SEED = {
       "type": "assignment",
       "dueAt": "2026-09-28T23:59:00+08:00",
       "status": "done",
-      "description": "Canvas：100 分；已按你的说明标记为完成。Canvas 当前显示 Not Yet Graded。",
+      "description": "Canvas：100 分，已得 100/100。附作业纸 assign1.pdf、数据 gp-training-set.csv 与参考解答 assign1-sol.pdf。",
       "sourceType": "canvas",
       "sourceUrl": "https://canvas.ust.hk/courses/71899/assignments/454598",
-      "lastCheckedAt": "2026-09-27T18:17:35+08:00",
+      "lastCheckedAt": "2026-10-12T14:53:13+08:00",
       "createdAt": "2026-09-25T13:50:00+08:00",
-      "updatedAt": "2026-09-25T13:50:00+08:00"
+      "updatedAt": "2026-10-12T14:53:13+08:00"
     },
     {
       "id": "arin5203-assignment-1",
@@ -92,13 +92,13 @@ const SCHEDULE_SEED = {
       "title": "Assignment 1",
       "type": "assignment",
       "dueAt": "2026-10-05T23:59:00+08:00",
-      "status": "todo",
-      "description": "课程官网：2026-09-21 发布；提交包含结果的 Jupyter Notebook 至 Canvas。",
+      "status": "done",
+      "description": "课程官网：2026-09-21 发布；提交包含结果的 Jupyter Notebook 至 Canvas。Canvas 显示已于 2026-09-29 提交。",
       "sourceType": "course-website",
       "sourceUrl": "https://cqf.io/ARIN5203/programs/",
-      "lastCheckedAt": "2026-09-27T18:17:35+08:00",
+      "lastCheckedAt": "2026-10-12T14:53:13+08:00",
       "createdAt": "2026-09-25T13:50:00+08:00",
-      "updatedAt": "2026-09-25T13:50:00+08:00"
+      "updatedAt": "2026-10-12T14:53:13+08:00"
     },
     {
       "id": "arin5203-project-1",
@@ -106,13 +106,13 @@ const SCHEDULE_SEED = {
       "title": "Project Proposal",
       "type": "project",
       "dueAt": "2026-10-05T23:59:00+08:00",
-      "status": "todo",
-      "description": "课程官网：项目提案 1 段（200-400 词），需说明问题与意义、背景阅读、数据来源、拟用方法、评估方式。可组队（≤3 人），组内仅需 1 人提交并在报告中注明成员姓名。项目组另有 8 个 late days（每个 deadline 最多用 4 个）。",
+      "status": "done",
+      "description": "课程官网：项目提案 1 段（200-400 词），需说明问题与意义、背景阅读、数据来源、拟用方法、评估方式。可组队（≤3 人），组内仅需 1 人提交并在报告中注明成员姓名。项目组另有 8 个 late days（每个 deadline 最多用 4 个）。Canvas 显示已于 2026-09-29 提交。",
       "sourceType": "course-website",
       "sourceUrl": "https://cqf.io/ARIN5203/project.html",
-      "lastCheckedAt": "2026-09-28T01:33:28+08:00",
+      "lastCheckedAt": "2026-10-12T14:53:13+08:00",
       "createdAt": "2026-09-28T01:33:28+08:00",
-      "updatedAt": "2026-09-28T01:33:28+08:00"
+      "updatedAt": "2026-10-12T14:53:13+08:00"
     },
     {
       "id": "arin5203-project-2",
@@ -124,7 +124,7 @@ const SCHEDULE_SEED = {
       "description": "课程官网：里程碑报告 2-3 页，使用提供的 CVPR 2022 LaTeX 模板；含标题/作者、引言、问题陈述、技术方案、中期结果。组内仅需 1 人提交并在报告中注明成员姓名。",
       "sourceType": "course-website",
       "sourceUrl": "https://cqf.io/ARIN5203/project.html",
-      "lastCheckedAt": "2026-09-28T01:33:28+08:00",
+      "lastCheckedAt": "2026-10-12T14:53:13+08:00",
       "createdAt": "2026-09-28T01:33:28+08:00",
       "updatedAt": "2026-09-28T01:33:28+08:00"
     },
@@ -138,9 +138,23 @@ const SCHEDULE_SEED = {
       "description": "课程官网：期末报告 6-8 页（CVPR 2022 模板，建议 LaTeX/Overleaf），另交独立文件的补充材料（代码/演示，不计入页数）。提交 PDF；组内仅需 1 人提交并注明成员姓名。",
       "sourceType": "course-website",
       "sourceUrl": "https://cqf.io/ARIN5203/project.html",
-      "lastCheckedAt": "2026-09-28T01:33:28+08:00",
+      "lastCheckedAt": "2026-10-12T14:53:13+08:00",
       "createdAt": "2026-09-28T01:33:28+08:00",
       "updatedAt": "2026-09-28T01:33:28+08:00"
+    },
+    {
+      "id": "canvas-71892-452640",
+      "courseId": "c2",
+      "title": "Programming Assignment 1",
+      "type": "assignment",
+      "dueAt": "2026-10-18T23:59:59+08:00",
+      "status": "todo",
+      "description": "Canvas：100 分，个人作业。在课程主页提供的 Jupyter Notebook 中直接完成全部任务，提交文件名用 arin5101_pa1_YourName.ipynb，DDL 2026-10-18 23:59。该课 Assignments 页被禁用，本条由课程模块（Week 6 - 6 Oct 2026）核对。",
+      "sourceType": "canvas",
+      "sourceUrl": "https://canvas.ust.hk/courses/71892/assignments/452640",
+      "lastCheckedAt": "2026-10-12T14:53:13+08:00",
+      "createdAt": "2026-10-12T14:53:13+08:00",
+      "updatedAt": "2026-10-12T14:53:13+08:00"
     }
   ],
   "semester": {
