@@ -11,6 +11,7 @@ with sync_playwright() as p:
     assert page.locator("#tabSchedule").get_attribute("aria-selected") == "true"
     page.click("#tabAssignments")
     page.wait_for_selector(".assignment-card")
+    assert page.locator("#tabAssignments").inner_text().strip() == "待办"
     assert page.locator(".assignment-card").count() == 12
     assert page.locator(".assignment-card.done").count() == 6
     assert "12 条结果 · 6 条未完成" in page.locator("#assignmentSummary").inner_text()
