@@ -28,7 +28,35 @@
 // ============================================================
 
 const SCHEDULE_SEED = {
-  "events": [],
+  "events": [
+    {
+      "id": "exam-5203-midterm-2026-10-26",
+      "title": "ARIN 5203 期中考试 (待确认)",
+      "date": "2026-10-26",
+      "start": "19:00",
+      "end": "21:50",
+      "location": "4619 · 开卷 · 按大纲 Week 9 推定",
+      "color": "#4f8ef7"
+    },
+    {
+      "id": "quiz-5101-2026-11-24",
+      "title": "ARIN 5101 随堂 Quiz (暂定)",
+      "date": "2026-11-24",
+      "start": "19:00",
+      "end": "21:50",
+      "location": "LT-C · 讲义写 tentative 24 Nov",
+      "color": "#34c38f"
+    },
+    {
+      "id": "exam-5102-final-2026-12-12",
+      "title": "ARIN 5102 期末考试",
+      "date": "2026-12-12",
+      "start": "14:30",
+      "end": "17:30",
+      "location": "Lecture Theater J · 官方期末考表",
+      "color": "#22b8cf"
+    }
+  ],
   "assignments": [
     {
       "id": "canvas-73253-455819",
