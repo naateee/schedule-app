@@ -278,7 +278,7 @@
 
   <div class="view-tabs" role="tablist" aria-label="主视图">
     <button class="view-tab active" id="tabSchedule" role="tab" aria-selected="true">课程表</button>
-    <button class="view-tab" id="tabAssignments" role="tab" aria-selected="false">作业与 Project</button>
+    <button class="view-tab" id="tabAssignments" role="tab" aria-selected="false">待办</button>
   </div>
 
   <section class="view-panel" id="schedulePanel">
@@ -313,6 +313,7 @@
       <select id="assignmentTypeFilter" aria-label="按类型筛选">
         <option value="all">全部类型</option><option value="assignment">Assignment</option>
         <option value="project">Project</option><option value="quiz">Quiz</option>
+        <option value="exam">考试</option>
         <option value="report">Report</option><option value="presentation">Presentation</option>
         <option value="other">其他</option>
       </select>
@@ -348,7 +349,7 @@ let anchor = null;      // 当前周锚点(周一)
 let curCourseForOverride = null;
 let currentView = 'schedule';
 const assignmentFilters = { status:'all', courseId:'all', type:'all' };
-const TYPE_LABELS = { assignment:'Assignment', project:'Project', quiz:'Quiz', report:'Report', presentation:'Presentation', other:'其他' };
+const TYPE_LABELS = { assignment:'Assignment', project:'Project', quiz:'Quiz', exam:'考试', report:'Report', presentation:'Presentation', other:'其他' };
 const STATUS_LABELS = { todo:'未开始', doing:'进行中', done:'已完成' };
 const SOURCE_LABELS = { canvas:'Canvas', 'course-website':'课程官网', manual:'手动添加' };
 
@@ -650,7 +651,7 @@ function switchView(view) {
   document.getElementById('tabSchedule').setAttribute('aria-selected', String(!assignments));
   document.getElementById('tabAssignments').setAttribute('aria-selected', String(assignments));
   const add = document.getElementById('btnAdd');
-  add.textContent = assignments ? '＋ 添加作业' : '＋ 添加日程';
+  add.textContent = assignments ? '＋ 添加待办' : '＋ 添加日程';
   if (assignments) renderAssignments();
 }
 
@@ -715,7 +716,7 @@ function openAssignmentForm(id) {
   const courseOptions = data.courses.filter(c=>c.active).map(c=>`<option value="${esc(c.id)}" ${c.id===a.courseId?'selected':''}>${esc(c.code)} · ${esc(c.short)}</option>`).join('');
   openModal(`
     <button class="close" onclick="closeModal()">×</button>
-    <h2>${existing?'编辑':'添加'}作业 / Project</h2>
+    <h2>${existing?'编辑':'添加'}待办</h2>
     <div class="sub">手动维护，保存后自动同步到其他设备</div>
     <div class="form">
       <div id="assignmentErrors" class="field-error"></div>
@@ -763,7 +764,7 @@ function setAssignmentStatus(id, status) {
 }
 
 function deleteAssignment(id) {
-  if (!confirm('确定删除这条作业记录？')) return;
+  if (!confirm('确定删除这条待办？')) return;
   data.assignments = data.assignments.filter(a=>a.id!==id);
   saveData(); renderAssignments(); closeModal();
 }

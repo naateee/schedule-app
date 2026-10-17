@@ -84,7 +84,7 @@ version: 1.0.0
   id: "canvas-73258-456261",
   courseId: "c5",
   title: "Assignment 1",
-  type: "assignment", // assignment|project|quiz|report|presentation|other
+  type: "assignment", // assignment|project|quiz|exam|report|presentation|other
   dueAt: "2026-10-18T23:30:00+08:00",
   status: "todo",     // todo|doing|done
   description: "Canvas：10 分，个人作业；提交单个 PDF。",

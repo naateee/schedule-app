@@ -183,6 +183,48 @@ const SCHEDULE_SEED = {
       "lastCheckedAt": "2026-10-12T14:53:13+08:00",
       "createdAt": "2026-10-12T14:53:13+08:00",
       "updatedAt": "2026-10-12T14:53:13+08:00"
+    },
+    {
+      "id": "exam-5203-midterm-2026-10-26",
+      "courseId": "c1",
+      "title": "期中考试 Midterm (待确认)",
+      "type": "exam",
+      "dueAt": "2026-10-26T19:00:00+08:00",
+      "status": "todo",
+      "description": "开卷随堂考，19:00–21:50（课室 4619），占 35%。日期由大纲 Week 9 + 上课日推得（10/19 重阳节翌日停课），教师尚未正式公布 → 待确认。",
+      "sourceType": "course-website",
+      "sourceUrl": "https://cqf.io/ARIN5203/about/syllabus.html",
+      "lastCheckedAt": "2026-10-17T16:47:54+08:00",
+      "createdAt": "2026-10-17T16:47:54+08:00",
+      "updatedAt": "2026-10-17T16:47:54+08:00"
+    },
+    {
+      "id": "quiz-5101-2026-11-24",
+      "courseId": "c2",
+      "title": "随堂 Quiz 20% (暂定)",
+      "type": "quiz",
+      "dueAt": "2026-11-24T19:00:00+08:00",
+      "status": "todo",
+      "description": "第 1 讲讲义 p16–17：in-class quiz 暂定 24 Nov（周二，正是本课上课日 19:00–21:50，LT-C）。占 20%，形式可能与上届不同；quiz 不许用 AI。",
+      "sourceType": "canvas",
+      "sourceUrl": "https://canvas.ust.hk/courses/71892",
+      "lastCheckedAt": "2026-10-17T16:47:54+08:00",
+      "createdAt": "2026-10-17T16:47:54+08:00",
+      "updatedAt": "2026-10-17T16:47:54+08:00"
+    },
+    {
+      "id": "exam-5102-final-2026-12-12",
+      "courseId": "c6",
+      "title": "期末考试 Final Exam",
+      "type": "exam",
+      "dueAt": "2026-12-12T14:30:00+08:00",
+      "status": "todo",
+      "description": "官方期末考时间表（Academic Registry，2026-10-16 公告）：12-Dec-2026 14:30–17:30 · Lecture Theater J。占 50%。",
+      "sourceType": "course-website",
+      "sourceUrl": "https://w5.ab.ust.hk/wex/cgi-bin/2610/subject/ARIN",
+      "lastCheckedAt": "2026-10-17T16:47:54+08:00",
+      "createdAt": "2026-10-17T16:47:54+08:00",
+      "updatedAt": "2026-10-17T16:47:54+08:00"
     }
   ],
   "semester": {

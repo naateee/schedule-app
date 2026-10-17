@@ -11,15 +11,17 @@ with sync_playwright() as p:
     assert page.locator("#tabSchedule").get_attribute("aria-selected") == "true"
     page.click("#tabAssignments")
     page.wait_for_selector(".assignment-card")
-    assert page.locator(".assignment-card").count() == 9
+    assert page.locator(".assignment-card").count() == 12
     assert page.locator(".assignment-card.done").count() == 6
-    assert "9 条结果 · 3 条未完成" in page.locator("#assignmentSummary").inner_text()
+    assert "12 条结果 · 6 条未完成" in page.locator("#assignmentSummary").inner_text()
     assert "Proposal for the final project" in page.locator(".assignment-title").all_inner_texts()
+    assert page.locator(".assignment-kind", has_text="考试").count() == 2
+    assert page.locator(".assignment-kind", has_text="Quiz").count() >= 1
     page.select_option("#assignmentStatusFilter", "done")
     assert page.locator(".assignment-card").count() == 6
     page.select_option("#assignmentStatusFilter", "all")
     page.select_option("#assignmentCourseFilter", "c1")
-    assert page.locator(".assignment-card").count() == 4
+    assert page.locator(".assignment-card").count() == 5
     page.select_option("#assignmentCourseFilter", "all")
 
     page.click("#btnAdd")
@@ -31,7 +33,7 @@ with sync_playwright() as p:
     page.fill("#asDue", "2026-11-01T23:59")
     page.click("#modal .btn.primary")
     page.wait_for_timeout(100)
-    assert page.locator(".assignment-card").count() == 10
+    assert page.locator(".assignment-card").count() == 13
     temp = page.locator(".assignment-card", has_text="E2E 临时任务")
     assert temp.count() == 1
     temp.locator("button", has_text="编辑").click()
@@ -44,7 +46,7 @@ with sync_playwright() as p:
     edited.locator("button", has_text="编辑").click()
     page.once("dialog", lambda dialog: dialog.accept())
     page.click("#modal .btn.danger")
-    assert page.locator(".assignment-card").count() == 9
+    assert page.locator(".assignment-card").count() == 12
     assert errors == [], errors
 
     # Existing schedule still renders after switching back.
@@ -57,14 +59,14 @@ with sync_playwright() as p:
     page.wait_for_load_state("domcontentloaded")
     page.click("#tabAssignments")
     page.wait_for_selector(".assignment-card")
-    assert page.locator(".assignment-card").count() == 9
+    assert page.locator(".assignment-card").count() == 12
 
     mobile = browser.new_context(viewport={"width":390,"height":844}).new_page()
     mobile.on("pageerror", lambda e: errors.append(str(e)))
     mobile.goto("http://127.0.0.1:8765/index.html?test=1", wait_until="domcontentloaded")
     mobile.click("#tabAssignments")
     mobile.wait_for_selector(".assignment-card")
-    assert mobile.locator(".assignment-card").count() == 9
+    assert mobile.locator(".assignment-card").count() == 12
     overflow = mobile.evaluate("document.documentElement.scrollWidth > document.documentElement.clientWidth")
     assert overflow is False
     assert errors == [], errors

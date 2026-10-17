@@ -5,7 +5,7 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function () {
   'use strict';
 
-  const VALID_TYPES = ['assignment', 'project', 'quiz', 'report', 'presentation', 'other'];
+  const VALID_TYPES = ['assignment', 'project', 'quiz', 'exam', 'report', 'presentation', 'other'];
   const VALID_STATUSES = ['todo', 'doing', 'done'];
   const VALID_SOURCES = ['canvas', 'course-website', 'manual'];
 
