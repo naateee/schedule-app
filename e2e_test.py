@@ -12,11 +12,11 @@ with sync_playwright() as p:
     page.click("#tabAssignments")
     page.wait_for_selector(".assignment-card")
     assert page.locator(".assignment-card").count() == 9
-    assert page.locator(".assignment-card.done").count() == 4
-    assert "9 条结果 · 5 条未完成" in page.locator("#assignmentSummary").inner_text()
+    assert page.locator(".assignment-card.done").count() == 6
+    assert "9 条结果 · 3 条未完成" in page.locator("#assignmentSummary").inner_text()
     assert "Proposal for the final project" in page.locator(".assignment-title").all_inner_texts()
     page.select_option("#assignmentStatusFilter", "done")
-    assert page.locator(".assignment-card").count() == 4
+    assert page.locator(".assignment-card").count() == 6
     page.select_option("#assignmentStatusFilter", "all")
     page.select_option("#assignmentCourseFilter", "c1")
     assert page.locator(".assignment-card").count() == 4

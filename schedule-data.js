@@ -78,13 +78,13 @@ const SCHEDULE_SEED = {
       "title": "Proposal for the final project",
       "type": "project",
       "dueAt": "2026-10-17T23:59:00+08:00",
-      "status": "todo",
-      "description": "Canvas：Final Project Proposal，10 分，当前尚未提交。需按所附 Course Project Guidelines 组队 5–6 人（People → Groups → Teams for the final project 自助组队），组内 1 人提交并在报告中注明成员。",
+      "status": "done",
+      "description": "Canvas：Final Project Proposal，10 分。需按所附 Course Project Guidelines 组队 5–6 人（People → Groups → Teams for the final project 自助组队），组内 1 人提交并在报告中注明成员。用户已在 App 标记完成（2026-10-16）。",
       "sourceType": "canvas",
       "sourceUrl": "https://canvas.ust.hk/courses/73258/assignments/455423",
       "lastCheckedAt": "2026-10-12T14:53:13+08:00",
       "createdAt": "2026-09-25T13:50:00+08:00",
-      "updatedAt": "2026-10-12T14:53:13+08:00"
+      "updatedAt": "2026-10-17T16:40:00+08:00"
     },
     {
       "id": "canvas-73258-456261",
@@ -92,13 +92,13 @@ const SCHEDULE_SEED = {
       "title": "Assignment 1",
       "type": "assignment",
       "dueAt": "2026-10-18T23:30:00+08:00",
-      "status": "todo",
-      "description": "Canvas：10 分，个人作业（须独立完成）；将答案整理为单个 PDF 上传，建议使用 LaTeX。2026-09-27 00:00 开放。",
+      "status": "done",
+      "description": "Canvas：10 分，个人作业（须独立完成）；将答案整理为单个 PDF 上传，建议使用 LaTeX。2026-09-27 00:00 开放。用户已在 App 标记完成（2026-10-16）。",
       "sourceType": "canvas",
       "sourceUrl": "https://canvas.ust.hk/courses/73258/assignments/456261",
       "lastCheckedAt": "2026-10-12T14:53:13+08:00",
       "createdAt": "2026-09-27T18:17:35+08:00",
-      "updatedAt": "2026-10-12T14:53:13+08:00"
+      "updatedAt": "2026-10-17T16:40:00+08:00"
     },
     {
       "id": "canvas-71899-454598",
