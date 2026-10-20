@@ -267,6 +267,20 @@ const SCHEDULE_SEED = {
       "lastCheckedAt": "2026-10-20T16:40:00+08:00",
       "createdAt": "2026-10-20T16:40:00+08:00",
       "updatedAt": "2026-10-20T16:40:00+08:00"
+    },
+    {
+      "id": "arin5202-project-final",
+      "courseId": "c3",
+      "title": "Final Project 展示 + 提交 (待确认)",
+      "type": "project",
+      "dueAt": "2026-11-25T19:00:00+08:00",
+      "status": "todo",
+      "description": "Canvas 公告 2026-10-14《Final Project Specification: Evolutionary Multi-Agent Collaboration System》：做多智能体协作平台，2–4 人组队（公告说本周内定员）；第 13 周现场展示，最终提交在第 13 周之后（具体日期未公布，最终测试集提前 3 周发放）。硬性约束：禁用 OpenAI/Anthropic，统一用 DeepSeek 或 HKGAI API（密钥后续发放）；只允许 md/txt 输出，禁做 PDF/DOCX/PPT 解析；交付 GitHub 仓库（附每人 commit 记录截图，禁最后一次性上传）+ 架构文档 + 性能报告（任务完成率/执行时间），评分看后端编排而非前端。本条 dueAt 取第 13 周上课日 11-25 19:00（按周次+周三课推定，老师未公布确切时间）→ 待确认。",
+      "sourceType": "canvas",
+      "sourceUrl": "https://canvas.ust.hk/courses/73253/announcements/648693",
+      "lastCheckedAt": "2026-10-20T17:00:00+08:00",
+      "createdAt": "2026-10-20T17:00:00+08:00",
+      "updatedAt": "2026-10-20T17:00:00+08:00"
     }
   ],
   "semester": {

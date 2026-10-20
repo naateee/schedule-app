@@ -12,9 +12,9 @@ with sync_playwright() as p:
     page.click("#tabAssignments")
     page.wait_for_selector(".assignment-card")
     assert page.locator("#tabAssignments").inner_text().strip() == "待办"
-    assert page.locator(".assignment-card").count() == 15
+    assert page.locator(".assignment-card").count() == 16
     assert page.locator(".assignment-card.done").count() == 6
-    assert "15 条结果 · 9 条未完成" in page.locator("#assignmentSummary").inner_text()
+    assert "16 条结果 · 10 条未完成" in page.locator("#assignmentSummary").inner_text()
     assert "Proposal for the final project" in page.locator(".assignment-title").all_inner_texts()
     assert page.locator(".assignment-kind", has_text="考试").count() == 2
     assert page.locator(".assignment-kind", has_text="Quiz").count() >= 1
@@ -34,7 +34,7 @@ with sync_playwright() as p:
     page.fill("#asDue", "2026-11-01T23:59")
     page.click("#modal .btn.primary")
     page.wait_for_timeout(100)
-    assert page.locator(".assignment-card").count() == 16
+    assert page.locator(".assignment-card").count() == 17
     temp = page.locator(".assignment-card", has_text="E2E 临时任务")
     assert temp.count() == 1
     temp.locator("button", has_text="编辑").click()
@@ -47,27 +47,27 @@ with sync_playwright() as p:
     edited.locator("button", has_text="编辑").click()
     page.once("dialog", lambda dialog: dialog.accept())
     page.click("#modal .btn.danger")
-    assert page.locator(".assignment-card").count() == 15
+    assert page.locator(".assignment-card").count() == 16
     assert errors == [], errors
 
     # Existing schedule still renders after switching back.
     page.click("#tabSchedule")
     assert page.locator("#gridBody .day-col").count() == 7
 
-    # Old JSON without assignments migrates to all current seed tasks (15).
+    # Old JSON without assignments migrates to all current seed tasks (16).
     legacy = {"semester":{"start":"2026-09-01","end":"2026-12-19"}, "courses":[], "events":[]}
     page.evaluate("obj => { localStorage.setItem('hkust-schedule-v1', JSON.stringify(obj)); location.reload(); }", legacy)
     page.wait_for_load_state("domcontentloaded")
     page.click("#tabAssignments")
     page.wait_for_selector(".assignment-card")
-    assert page.locator(".assignment-card").count() == 15
+    assert page.locator(".assignment-card").count() == 16
 
     mobile = browser.new_context(viewport={"width":390,"height":844}).new_page()
     mobile.on("pageerror", lambda e: errors.append(str(e)))
     mobile.goto("http://127.0.0.1:8765/index.html?test=1", wait_until="domcontentloaded")
     mobile.click("#tabAssignments")
     mobile.wait_for_selector(".assignment-card")
-    assert mobile.locator(".assignment-card").count() == 15
+    assert mobile.locator(".assignment-card").count() == 16
     overflow = mobile.evaluate("document.documentElement.scrollWidth > document.documentElement.clientWidth")
     assert overflow is False
     assert errors == [], errors
