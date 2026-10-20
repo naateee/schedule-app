@@ -225,6 +225,48 @@ const SCHEDULE_SEED = {
       "lastCheckedAt": "2026-10-17T16:47:54+08:00",
       "createdAt": "2026-10-17T16:47:54+08:00",
       "updatedAt": "2026-10-17T16:47:54+08:00"
+    },
+    {
+      "id": "canvas-71916-459651",
+      "courseId": "c1",
+      "title": "Assignment 2",
+      "type": "assignment",
+      "dueAt": "2026-10-28T23:59:59+08:00",
+      "status": "todo",
+      "description": "Canvas + 课程官网：100 分，2026-10-12 发布（10-20 00:00 起可提交，Lock 11-01）。提交含运行结果的 Jupyter Notebook（官网提供 Assignment2.pdf 与 Assignment2_code.zip，建议用 Colab）。官网作业表写 Date Due 28 Oct 2026，与 Canvas 的 28 Oct 23:59 一致。",
+      "sourceType": "canvas",
+      "sourceUrl": "https://canvas.ust.hk/courses/71916/assignments/459651",
+      "lastCheckedAt": "2026-10-20T16:40:00+08:00",
+      "createdAt": "2026-10-20T16:40:00+08:00",
+      "updatedAt": "2026-10-20T16:40:00+08:00"
+    },
+    {
+      "id": "canvas-71899-458834",
+      "courseId": "c6",
+      "title": "Assignment 2",
+      "type": "assignment",
+      "dueAt": "2026-10-28T23:59:59+08:00",
+      "status": "todo",
+      "description": "Canvas：100 分；作业纸 assign2.pdf 已发布，页内写明 Due: Oct 28, 2026（Lock 12-07）。提交入口为 Assignments → Assignment 2。",
+      "sourceType": "canvas",
+      "sourceUrl": "https://canvas.ust.hk/courses/71899/assignments/458834",
+      "lastCheckedAt": "2026-10-20T16:40:00+08:00",
+      "createdAt": "2026-10-20T16:40:00+08:00",
+      "updatedAt": "2026-10-20T16:40:00+08:00"
+    },
+    {
+      "id": "canvas-73258-459611",
+      "courseId": "c5",
+      "title": "Assignment 2",
+      "type": "assignment",
+      "dueAt": "2026-11-09T23:59:59+08:00",
+      "status": "todo",
+      "description": "Canvas：10 分，2026-10-19 发布公告并附 Assignment2.zip（题目文档 + starter notebooks + 数据集），提交完成的 notebook/代码文件到 Assignments → Assignment 2；DDL 2026-11-09，通常不接受迟交。",
+      "sourceType": "canvas",
+      "sourceUrl": "https://canvas.ust.hk/courses/73258/assignments/459611",
+      "lastCheckedAt": "2026-10-20T16:40:00+08:00",
+      "createdAt": "2026-10-20T16:40:00+08:00",
+      "updatedAt": "2026-10-20T16:40:00+08:00"
     }
   ],
   "semester": {
