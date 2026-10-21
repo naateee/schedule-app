@@ -30,12 +30,12 @@
 const SCHEDULE_SEED = {
   "events": [
     {
-      "id": "exam-5203-midterm-2026-10-26",
-      "title": "ARIN 5203 期中考试 (待确认)",
-      "date": "2026-10-26",
+      "id": "exam-5203-midterm-2026-11-02",
+      "title": "ARIN 5203 期中考试",
+      "date": "2026-11-02",
       "start": "19:00",
-      "end": "21:50",
-      "location": "4619 · 开卷 · 按大纲 Week 9 推定",
+      "end": "20:30",
+      "location": "Rm 4619 · 开卷 · 带学生证",
       "color": "#4f8ef7"
     },
     {
@@ -185,18 +185,18 @@ const SCHEDULE_SEED = {
       "updatedAt": "2026-10-12T14:53:13+08:00"
     },
     {
-      "id": "exam-5203-midterm-2026-10-26",
+      "id": "exam-5203-midterm-2026-11-02",
       "courseId": "c1",
-      "title": "期中考试 Midterm (待确认)",
+      "title": "期中考试 Midterm",
       "type": "exam",
-      "dueAt": "2026-10-26T19:00:00+08:00",
+      "dueAt": "2026-11-02T19:00:00+08:00",
       "status": "todo",
-      "description": "开卷随堂考，19:00–21:50（课室 4619），占 35%。日期由大纲 Week 9 + 上课日推得（10/19 重阳节翌日停课），教师尚未正式公布 → 待确认。",
-      "sourceType": "course-website",
-      "sourceUrl": "https://cqf.io/ARIN5203/about/syllabus.html",
-      "lastCheckedAt": "2026-10-17T16:47:54+08:00",
+      "description": "官方邮件通知（Qifeng Chen，2026-10-21）：11-02 周一 19:00–20:30，Rm 4619，开卷，占 35%。可带任何纸质资料；可用笔记本/平板浏览课程网站上的材料（含指向外部网站的超链接），但考试中禁止 Google、AI 工具与任何外部网站（外部材料须提前下载好），同学之间不得交流。范围：截至 10-26 的讲义。需带学生证；违反荣誉守则即本课 Fail。样卷：https://cqf.io/ARIN5203/lectures/index.html",
+      "sourceType": "manual",
+      "sourceUrl": "https://cqf.io/ARIN5203/lectures/index.html",
+      "lastCheckedAt": "2026-10-21T11:10:00+08:00",
       "createdAt": "2026-10-17T16:47:54+08:00",
-      "updatedAt": "2026-10-17T16:47:54+08:00"
+      "updatedAt": "2026-10-21T11:10:00+08:00"
     },
     {
       "id": "quiz-5101-2026-11-24",
