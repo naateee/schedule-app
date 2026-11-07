@@ -40,11 +40,11 @@ const SCHEDULE_SEED = {
     },
     {
       "id": "quiz-5101-2026-11-24",
-      "title": "ARIN 5101 随堂 Quiz (暂定)",
+      "title": "ARIN 5101 随堂 Quiz",
       "date": "2026-11-24",
       "start": "19:00",
       "end": "21:50",
-      "location": "LT-C · 讲义写 tentative 24 Nov",
+      "location": "LT-C · 11-04 公告确认 19:00 开始（地点/时长/形式待公告）",
       "color": "#34c38f"
     },
     {
@@ -55,6 +55,15 @@ const SCHEDULE_SEED = {
       "end": "17:30",
       "location": "Lecture Theater J · 官方期末考表",
       "color": "#22b8cf"
+    },
+    {
+      "id": "present-5201-final-2026-11-27",
+      "title": "ARIN 5201 Final Presentation (Team 9)",
+      "date": "2026-11-27",
+      "start": "19:00",
+      "end": "21:50",
+      "location": "课室待定 · 本队 11-27 场第 5 个出场（约 19:40 起，10 分钟）",
+      "color": "#f7a34f"
     }
   ],
   "assignments": [
@@ -215,16 +224,16 @@ const SCHEDULE_SEED = {
     {
       "id": "quiz-5101-2026-11-24",
       "courseId": "c2",
-      "title": "随堂 Quiz 20% (暂定)",
+      "title": "随堂 Quiz 20%（11-24 19:00）",
       "type": "quiz",
       "dueAt": "2026-11-24T19:00:00+08:00",
       "status": "todo",
-      "description": "第 1 讲讲义 p16–17：in-class quiz 暂定 24 Nov（周二，正是本课上课日 19:00–21:50，LT-C）。占 20%，形式可能与上届不同；quiz 不许用 AI。",
+      "description": "2026-11-04 公告确认：Quiz 在 11-24（周二）19:00 开始，占 20%；地点、时长、形式（open/closed book）待教师进一步公告。",
       "sourceType": "canvas",
       "sourceUrl": "https://canvas.ust.hk/courses/71892",
       "lastCheckedAt": "2026-10-17T16:47:54+08:00",
       "createdAt": "2026-10-17T16:47:54+08:00",
-      "updatedAt": "2026-10-17T16:47:54+08:00"
+      "updatedAt": "2026-11-07T20:20:00+08:00"
     },
     {
       "id": "exam-5102-final-2026-12-12",
@@ -295,6 +304,76 @@ const SCHEDULE_SEED = {
       "lastCheckedAt": "2026-10-20T17:00:00+08:00",
       "createdAt": "2026-10-20T17:00:00+08:00",
       "updatedAt": "2026-10-20T17:00:00+08:00"
+    },
+    {
+      "id": "arin5101-project-dataset-2026-11-10",
+      "courseId": "c2",
+      "title": "项目数据集确认（邮件报备 TA）",
+      "type": "project",
+      "dueAt": "2026-11-10T23:59:00+08:00",
+      "status": "todo",
+      "description": "把小组要用的数据集（FashionMNIST / CIFAR-10 / CIFAR-100 子集 / OxfordIIITPet / Kaggle）写一段说明邮件给 Muhammad usman@ust.hk；逾期不报备会扣分。来源：Canvas 公告「Important Dates and Deadlines」(2026-11-04)。",
+      "sourceType": "manual",
+      "sourceUrl": "https://canvas.ust.hk/courses/71892/announcements",
+      "lastCheckedAt": "2026-11-07T20:20:00+08:00",
+      "createdAt": "2026-11-07T20:20:00+08:00",
+      "updatedAt": "2026-11-07T20:20:00+08:00"
+    },
+    {
+      "id": "canvas-73253-460875",
+      "courseId": "c3",
+      "title": "Assignment 02",
+      "type": "assignment",
+      "dueAt": "2026-11-15T23:59:00+08:00",
+      "status": "todo",
+      "description": "Canvas：20 分，online_upload，附件 assignment_02_NLP.ipynb；作业与最新讲义同条发布（2026-10-25）。",
+      "sourceType": "canvas",
+      "sourceUrl": "https://canvas.ust.hk/courses/73253/assignments/460875",
+      "lastCheckedAt": "2026-11-07T20:20:00+08:00",
+      "createdAt": "2026-11-07T20:20:00+08:00",
+      "updatedAt": "2026-11-07T20:20:00+08:00"
+    },
+    {
+      "id": "present-5201-final-2026-11-27",
+      "courseId": "c5",
+      "title": "Final Project 展示（Team 9，第 5 个出场）",
+      "type": "presentation",
+      "dueAt": "2026-11-27T19:00:00+08:00",
+      "status": "todo",
+      "description": "2026-11-04 公告：展示分两场 —— 11-20（16 队）与 11-27（15 队），每队约 10 分钟，不交 slides。本队 Team 9 在 11-27 场第 5 个出场（队友 CHEN Shenyao / MEI Zhongxuan / MOU Haoyan / TONG Lanyue / ZHOU Yuxuan）。换组申请截止 11-11 23:59（邮件 TA，主题 Presentation swap: Team X and Team Y）。具体钟点待 TA 定稿。",
+      "sourceType": "canvas",
+      "sourceUrl": "https://canvas.ust.hk/courses/73258",
+      "lastCheckedAt": "2026-11-07T20:20:00+08:00",
+      "createdAt": "2026-11-07T20:20:00+08:00",
+      "updatedAt": "2026-11-07T20:20:00+08:00"
+    },
+    {
+      "id": "canvas-71892-452638",
+      "courseId": "c2",
+      "title": "Course Project（小组 · 30%）",
+      "type": "project",
+      "dueAt": "2026-11-30T23:59:00+08:00",
+      "status": "todo",
+      "description": "Canvas：100 分 → 课程 30%。3 人小组；交付 1 个 notebook（report+code+图，须在 Virtual Barn 上从头跑通，无 GPU）+ 3–5 分钟视频（全员出镜，禁 AI 数字人/合成语音），每组 1 人提交。基线 CNN（2 卷积+128 隐层）→ 从 Dropout/BatchNorm/DataAug 任选两项做 4 组对比 + 少量调参；评分：数据 15/模型 20/评估 20/代码 10/报告 10/视频 15。",
+      "sourceType": "canvas",
+      "sourceUrl": "https://canvas.ust.hk/courses/71892/assignments/452638",
+      "lastCheckedAt": "2026-11-07T20:20:00+08:00",
+      "createdAt": "2026-11-07T20:20:00+08:00",
+      "updatedAt": "2026-11-07T20:20:00+08:00"
+    },
+    {
+      "id": "canvas-71899-460871",
+      "courseId": "c6",
+      "title": "Project（个人期末项目）",
+      "type": "project",
+      "dueAt": "2026-11-30T23:59:00+08:00",
+      "status": "todo",
+      "description": "Canvas：100 分。用开放模型（DeepSeek/HKGAI）搭多智能体协作系统，在 τ²-Airline / MCPMark / DeepPlanning-Shopping 上评测（40 公开 + 40 隐藏 case）。① 10-31 公告要求 11-07 前完成环境搭建 + smoke test（GitHub: meizi-l/2026-Fall-Agent-Course-Project）；② 11-06 教师邮件允许在 student_tools/ 写确定性 Python helper（覆盖 MCPMark 三类任务的 no-Python 限制），提交前须跑 submission builder。",
+      "sourceType": "canvas",
+      "sourceUrl": "https://canvas.ust.hk/courses/71899/assignments/460871",
+      "lastCheckedAt": "2026-11-07T20:20:00+08:00",
+      "createdAt": "2026-11-07T20:20:00+08:00",
+      "updatedAt": "2026-11-07T20:20:00+08:00"
     }
   ],
   "semester": {
