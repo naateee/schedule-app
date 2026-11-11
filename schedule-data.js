@@ -42,9 +42,9 @@ const SCHEDULE_SEED = {
       "id": "quiz-5101-2026-11-24",
       "title": "ARIN 5101 随堂 Quiz",
       "date": "2026-11-24",
-      "start": "19:00",
-      "end": "21:50",
-      "location": "LT-C · 11-04 公告确认 19:00 开始（地点/时长/形式待公告）",
+      "start": "19:10",
+      "end": "20:40",
+      "location": "LT-C（平时教室）· 19:10 开始，约 1.5 小时 · 闭卷，可带 1 张 A4 双面 cheat sheet + 简单计算器",
       "color": "#34c38f"
     },
     {
@@ -224,16 +224,16 @@ const SCHEDULE_SEED = {
     {
       "id": "quiz-5101-2026-11-24",
       "courseId": "c2",
-      "title": "随堂 Quiz 20%（11-24 19:00）",
+      "title": "随堂 Quiz 20%（11-24 19:10）",
       "type": "quiz",
-      "dueAt": "2026-11-24T19:00:00+08:00",
+      "dueAt": "2026-11-24T19:10:00+08:00",
       "status": "todo",
-      "description": "2026-11-04 公告确认：Quiz 在 11-24（周二）19:00 开始，占 20%；地点、时长、形式（open/closed book）待教师进一步公告。",
+      "description": "Canvas 模块页「In-Class Quiz」已公布全部细节：11-24（周二）19:10 开始，约 1.5 小时，地点 LT-C（平时教室，考前公布座位表，提前 10 分钟到场），闭卷；可带 1 张 A4 双面 cheat sheet + 简单计算器，其它电子设备禁止；约 20–25 题（选择/简答/填空）；范围截至 11-17 那节课。占课程 20%。样题（25 页 / 19 题 / 100 分）与官方答案已在本地知识库 quiz/ 目录。",
       "sourceType": "canvas",
       "sourceUrl": "https://canvas.ust.hk/courses/71892",
-      "lastCheckedAt": "2026-10-17T16:47:54+08:00",
+      "lastCheckedAt": "2026-11-12T02:15:00+08:00",
       "createdAt": "2026-10-17T16:47:54+08:00",
-      "updatedAt": "2026-11-07T20:20:00+08:00"
+      "updatedAt": "2026-11-12T02:15:00+08:00"
     },
     {
       "id": "exam-5102-final-2026-12-12",
