@@ -388,6 +388,48 @@ const SCHEDULE_SEED = {
       "lastCheckedAt": "2026-11-10T18:49:29+08:00",
       "createdAt": "2026-11-10T18:55:00+08:00",
       "updatedAt": "2026-11-10T18:55:00+08:00"
+    },
+    {
+      "id": "canvas-71899-463371",
+      "courseId": "c6",
+      "title": "Assignment 3",
+      "type": "assignment",
+      "dueAt": "2026-11-28T23:59:00+08:00",
+      "status": "todo",
+      "description": "Canvas：100 分，online_upload。Written 70 分（7 题各 10：独角兽命题逻辑归结反证、一阶逻辑表示五句、GSCA 学规则、政治家与 Fed 的 Nash 均衡、首价拍卖、minimax、α-β 剪枝左起+右起）+ Programming 30 分（Z3：Lady or Tiger → lady.py、Ranking Problem → ranking.py，打包 YourStudentID.zip）。纯笔试 + 脚本，无数据集。迟交每天 −20%。",
+      "sourceType": "canvas",
+      "sourceUrl": "https://canvas.ust.hk/courses/71899/assignments/463371",
+      "lastCheckedAt": "2026-11-16T18:35:00+08:00",
+      "createdAt": "2026-11-16T18:35:00+08:00",
+      "updatedAt": "2026-11-16T18:35:00+08:00"
+    },
+    {
+      "id": "arin5203-assignment-3",
+      "courseId": "c1",
+      "title": "Assignment 3",
+      "type": "assignment",
+      "dueAt": "2026-12-02T23:59:00+08:00",
+      "status": "todo",
+      "description": "官网（cqf.io programs 页，2026-11-16 发布）：100 分。Section 1 GAN 必做 60 分（CUB 2011；Vanilla GAN / LS-GAN / WGAN-GP，目标 FID 分别 <110 / <90 / <70，超参不许改）+ Section 2/3/4 任选其一 40 分（VAE 用 CIFAR-10：AE recon<40、VAE<145、β-annealing<125；Diffusion：DDPM+DDIM FID<60；Flow Matching：Euler ODE FID<60）。题目与代码包复用 2025Fall 版（逐字节相同）。官网只给日期（2 Dec 2026），时刻未公布 → 暂记 23:59。提交：Canvas 两个入口 Assignment3 [coding]（collect_submission.sh 生成 assignment3.zip）+ Assignment 3 [written]。",
+      "sourceType": "course-website",
+      "sourceUrl": "https://cqf.io/ARIN5203/programs/index.html",
+      "lastCheckedAt": "2026-11-16T18:35:00+08:00",
+      "createdAt": "2026-11-16T18:35:00+08:00",
+      "updatedAt": "2026-11-16T18:35:00+08:00"
+    },
+    {
+      "id": "canvas-73253-463473",
+      "courseId": "c3",
+      "title": "Assignment 03",
+      "type": "assignment",
+      "dueAt": "2026-12-13T23:59:00+08:00",
+      "status": "todo",
+      "description": "Canvas：20 分，online_upload，附件 assignment3.ipynb（6 个 coding task 全为 TODO 骨架：Multinomial NB / Viterbi HMM / sklearn-crfsuite CRF / LSTM+IMDB / 手写 dot-product 与 scaled attention / 冻结 BERT+MLP）。依赖 sklearn-crfsuite、torch、transformers、datasets。只交单个 .ipynb，不许改题、不许压 zip/rar。",
+      "sourceType": "canvas",
+      "sourceUrl": "https://canvas.ust.hk/courses/73253/assignments/463473",
+      "lastCheckedAt": "2026-11-16T18:35:00+08:00",
+      "createdAt": "2026-11-16T18:35:00+08:00",
+      "updatedAt": "2026-11-16T18:35:00+08:00"
     }
   ],
   "semester": {
