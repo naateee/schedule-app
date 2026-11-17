@@ -430,6 +430,20 @@ const SCHEDULE_SEED = {
       "lastCheckedAt": "2026-11-16T18:35:00+08:00",
       "createdAt": "2026-11-16T18:35:00+08:00",
       "updatedAt": "2026-11-16T18:35:00+08:00"
+    },
+    {
+      "id": "canvas-73258-463727",
+      "courseId": "c5",
+      "title": "Final Project Technical Report（30%）",
+      "type": "report",
+      "dueAt": "2026-12-12T23:59:59+08:00",
+      "status": "todo",
+      "description": "Canvas：30 分 → 课程 30%（Final Project — Technical Report）。6 页 CVPR 式论文（参考文献不计页）：成员与分工、里程碑时间线、方法、实验与结果分析、结论。⚠️ 每队只交一份，指定一名队员代交；提交页正文与 11-17 公告都写「December 13」，而 Canvas due_at = 2026-12-12 23:59 HKT（教师称这是其上报成绩的截止，错过无法补救）→ 按 12-12 23:59 交。11-17 公告（教师 Wenhan）另说明：展示不要求全员到场、展示时不用交报告初版。",
+      "sourceType": "canvas",
+      "sourceUrl": "https://canvas.ust.hk/courses/73258/assignments/463727",
+      "lastCheckedAt": "2026-11-17T21:58:00+08:00",
+      "createdAt": "2026-11-17T21:58:00+08:00",
+      "updatedAt": "2026-11-17T21:58:00+08:00"
     }
   ],
   "semester": {
